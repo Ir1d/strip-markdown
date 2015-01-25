@@ -5,8 +5,7 @@
  */
 
 var stripMarkdown = require('wooorm/strip-markdown@0.1.0');
-var mdast = require('wooorm/mdast@0.1.10').use(stripMarkdown);
-var debounce = require('component/debounce@1.0.0');
+var mdast = require('wooorm/mdast@0.1.11').use(stripMarkdown);
 
 /*
  * DOM nodes.
@@ -27,7 +26,7 @@ function oninputchange() {
  * Listen.
  */
 
-$input.addEventListener('input', debounce(oninputchange, 200));
+$input.addEventListener('input', oninputchange);
 
 /*
  * Initial answer.
