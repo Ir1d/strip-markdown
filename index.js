@@ -1,35 +1,24 @@
 'use strict';
 
-/*
- * Dependencies.
- */
+/* Dependencies. */
+var strip = require('strip-markdown');
+var remark = require('remark');
 
-var stripMarkdown = require('wooorm/strip-markdown@0.1.0');
-var mdast = require('wooorm/mdast@0.1.11').use(stripMarkdown);
+var processor = remark().use(strip);
 
-/*
- * DOM nodes.
- */
-
+/* Nodes. */
 var $input = document.querySelector('[autofocus]');
 var $output = document.querySelector('[readonly]');
 
-/*
- * Handlers.
- */
-
-function oninputchange() {
-    $output.textContent = mdast.stringify(mdast.parse($input.value));
-}
-
-/*
- * Listen.
- */
-
+/* Listen. */
 $input.addEventListener('input', oninputchange);
 
-/*
- * Initial answer.
- */
-
+/* Initial answer. */
 oninputchange();
+
+/* Handlers. */
+function oninputchange() {
+  console.log('$input: ', $input.value);
+  $output.textContent = processor.process($input.value).toString();
+  console.log('$output: ', $output.value);
+}
