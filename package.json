@@ -5,7 +5,7 @@
   "homepage": "http://wooorm.com/strip-markdown",
   "dependencies": {
     "remark": "^6.0.1",
-    "strip-markdown": "^2.0.0"
+    "strip-markdown": "^3.0.0"
   },
   "devDependencies": {
     "browserify": "^13.1.0"

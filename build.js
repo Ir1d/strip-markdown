@@ -5262,10 +5262,11 @@ module.exports = {
   commonmark: false,
   footnotes: false,
   pedantic: false,
+  blocks: require('./block-elements'),
   breaks: false
 };
 
-},{}],40:[function(require,module,exports){
+},{"./block-elements":37}],40:[function(require,module,exports){
 /**
  * @author Titus Wormer
  * @copyright 2015 Titus Wormer
@@ -5794,7 +5795,10 @@ function setOptions(options) {
       value = current[key];
     }
 
-    if (typeof value !== 'boolean') {
+    if (
+      (key !== 'blocks' && typeof value !== 'boolean') ||
+      (key === 'blocks' && typeof value !== 'object')
+    ) {
       throw new Error(
         'Invalid value `' + value + '` ' +
         'for setting `options.' + key + '`'
@@ -7799,6 +7803,7 @@ var MIN_CLOSING_HTML_NEWLINE_COUNT = 2;
  */
 function blockHTML(eat, value, silent) {
   var self = this;
+  var blocks = self.options.blocks;
   var index = 0;
   var length = value.length;
   var subvalue = '';
@@ -7826,8 +7831,8 @@ function blockHTML(eat, value, silent) {
     cdata(value) ||
     instruction(value) ||
     declaration(value) ||
-    closing(value, true) ||
-    opening(value, true);
+    closing(value, blocks) ||
+    opening(value, blocks);
 
   if (!queue) {
     return;
@@ -8422,6 +8427,7 @@ function list(eat, value, silent) {
   var index = 0;
   var length = value.length;
   var start = null;
+  var size = 0;
   var queue;
   var ordered;
   var character;
@@ -8445,16 +8451,23 @@ function list(eat, value, silent) {
   var now;
   var end;
   var indented;
-  var size;
 
   while (index < length) {
     character = value.charAt(index);
 
-    if (character !== C_SPACE && character !== C_TAB) {
+    if (character === C_TAB) {
+      size += TAB_SIZE - (size % TAB_SIZE);
+    } else if (character === C_SPACE) {
+      size++;
+    } else {
       break;
     }
 
     index++;
+  }
+
+  if (size >= TAB_SIZE) {
+    return;
   }
 
   character = value.charAt(index);
@@ -11021,7 +11034,6 @@ function match(value) {
 var alphabetical = require('is-alphabetical');
 var decimal = require('is-decimal');
 var whitespace = require('is-whitespace-character');
-var blockElements = require('../block-elements.json');
 
 /* Expose. */
 module.exports = match;
@@ -11035,12 +11047,12 @@ var C_SLASH = '/';
  * Try to match a closing tag.
  *
  * @param {string} value - Value to parse.
- * @param {boolean?} [isBlock] - Whether the tag-name
- *   must be a known block-level node to match.
+ * @param {Array.<string>?} [blocks] - Known block tag-names,
+ *   which must be matched if given.
  * @return {string?} - When applicable, the closing tag at
  *   the start of `value`.
  */
-function match(value, isBlock) {
+function match(value, blocks) {
   var index = 0;
   var length = value.length;
   var queue = '';
@@ -11073,7 +11085,7 @@ function match(value, isBlock) {
       index++;
     }
 
-    if (isBlock && blockElements.indexOf(subqueue.toLowerCase()) === -1) {
+    if (blocks && blocks.indexOf(subqueue.toLowerCase()) === -1) {
       return;
     }
 
@@ -11097,7 +11109,7 @@ function match(value, isBlock) {
   }
 }
 
-},{"../block-elements.json":37,"is-alphabetical":20,"is-decimal":24,"is-whitespace-character":26}],86:[function(require,module,exports){
+},{"is-alphabetical":20,"is-decimal":24,"is-whitespace-character":26}],86:[function(require,module,exports){
 /**
  * @author Titus Wormer
  * @copyright 2015 Titus Wormer
@@ -11112,7 +11124,6 @@ function match(value, isBlock) {
 var alphabetical = require('is-alphabetical');
 var decimal = require('is-decimal');
 var whitespace = require('is-whitespace-character');
-var blockElements = require('../block-elements.json');
 
 /* Expose. */
 module.exports = match;
@@ -11129,12 +11140,12 @@ var C_EQUALS = '=';
  * Try to match a closing tag.
  *
  * @param {string} value - Value to parse.
- * @param {boolean?} [isBlock] - Whether the tag-name
- *   must be a known block-level node to match.
+ * @param {Array.<string>?} [blocks] - Known block tag-names,
+ *   which must be matched if given.
  * @return {string?} - When applicable, the closing tag at
  *   the start of `value`.
  */
-function match(value, isBlock) {
+function match(value, blocks) {
   var index = 0;
   var length = value.length;
   var queue = '';
@@ -11166,7 +11177,7 @@ function match(value, isBlock) {
       index++;
     }
 
-    if (isBlock && blockElements.indexOf(subqueue.toLowerCase()) === -1) {
+    if (blocks && blocks.indexOf(subqueue.toLowerCase()) === -1) {
       return;
     }
 
@@ -11363,7 +11374,7 @@ function isSingleQuotedAttributeCharacter(character) {
 
 isSingleQuotedAttributeCharacter.delimiter = C_SINGLE_QUOTE;
 
-},{"../block-elements.json":37,"is-alphabetical":20,"is-decimal":24,"is-whitespace-character":26}],87:[function(require,module,exports){
+},{"is-alphabetical":20,"is-decimal":24,"is-whitespace-character":26}],87:[function(require,module,exports){
 /**
  * @author Titus Wormer
  * @copyright 2015 Titus Wormer
@@ -11777,10 +11788,14 @@ function factory(options) {
           }
 
           if (markers.indexOf(value.charAt(offset)) !== -1) {
-            queue.push(value.slice(position, offset));
-            position = offset;
-            character = value.charAt(position);
-            replace = true;
+            next = value.charAt(offset + 1);
+
+            if (!next || next === ' ' || next === '\t' || next === '\n') {
+              queue.push(value.slice(position, offset));
+              position = offset;
+              character = value.charAt(position);
+              replace = true;
+            }
           }
         }
       }
@@ -13877,7 +13892,7 @@ module.exports = repeat;
 
 function repeat(str, num) {
   if (typeof str !== 'string') {
-    throw new TypeError('repeat-string expects a string.');
+    throw new TypeError('expected a string');
   }
 
   // cover common, quick use cases
@@ -13888,21 +13903,23 @@ function repeat(str, num) {
   if (cache !== str || typeof cache === 'undefined') {
     cache = str;
     res = '';
+  } else if (res.length >= max) {
+    return res.substr(0, max);
   }
 
-  while (max > res.length && num > 0) {
+  while (max > res.length && num > 1) {
     if (num & 1) {
       res += str;
     }
 
     num >>= 1;
-    if (!num) break;
     str += str;
   }
 
-  return res.substr(0, max);
+  res += str;
+  res = res.substr(0, max);
+  return res;
 }
-
 
 },{}],136:[function(require,module,exports){
 'use strict';
@@ -14235,13 +14252,14 @@ var map = {};
 
 map.heading = paragraph;
 map.text = map.inlineCode = text;
-map.image = image;
+map.image = map.imageReference = image;
+map.break = lineBreak;
 
 map.blockquote = map.list = map.listItem = map.strong =
   map.emphasis = map.delete = map.link = map.linkReference = children;
 
 map.code = map.horizontalRule = map.thematicBreak = map.html =
-  map.table = map.tableCell = map.definition = empty;
+  map.table = map.tableCell = map.definition = map.yaml = empty;
 
 /* One node. */
 function one(node) {
@@ -14330,6 +14348,11 @@ function paragraph(token) {
 /* Return the concatenation of `token`s children. */
 function children(token) {
   return token.children;
+}
+
+/* Return line break. */
+function lineBreak() {
+  return {type: 'text', value: '\n'};
 }
 
 /* Return nothing. */
