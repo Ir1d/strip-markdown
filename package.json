@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "homepage": "http://wooorm.com/strip-markdown",
   "dependencies": {
-    "remark": "^6.0.1",
+    "remark": "^8.0.0",
     "strip-markdown": "^3.0.0"
   },
   "devDependencies": {

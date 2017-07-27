@@ -1,55 +1,30 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var strip = require('strip-markdown');
 var remark = require('remark');
 
 var processor = remark().use(strip);
 
-/* Nodes. */
 var $input = document.querySelector('[autofocus]');
 var $output = document.querySelector('[readonly]');
 
-/* Listen. */
 $input.addEventListener('input', oninputchange);
 
-/* Initial answer. */
 oninputchange();
 
 /* Handlers. */
 function oninputchange() {
-  console.log('$input: ', $input.value);
-  $output.textContent = processor.process($input.value).toString();
-  console.log('$output: ', $output.value);
+  $output.textContent = processor.processSync($input.value).toString();
 }
 
-},{"remark":134,"strip-markdown":140}],2:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module array-iterate
- * @fileoverview `forEach` with the possibility to change the
- *   next position.
- */
-
+},{"remark":120,"strip-markdown":126}],2:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
-var has = require('has');
-
-/* Expose. */
 module.exports = iterate;
 
-/**
- * `Array#forEach()` with the possibility to change
- * the next position.
- *
- * @param {{length: number}} values - Values.
- * @param {arrayIterate~callback} callback - Callback given to `iterate`.
- * @param {*?} [context] - Context object to use when invoking `callback`.
- */
+var own = {}.hasOwnProperty;
+
 function iterate(values, callback, context) {
   var index = -1;
   var result;
@@ -58,7 +33,7 @@ function iterate(values, callback, context) {
     throw new Error('Iterate requires that |this| not be ' + values);
   }
 
-  if (!has(values, 'length')) {
+  if (!own.call(values, 'length')) {
     throw new Error('Iterate requires that |this| has a `length`');
   }
 
@@ -75,11 +50,8 @@ function iterate(values, callback, context) {
 
     result = callback.call(context, values[index], index, values);
 
-    /*
-     * If `callback` returns a `number`, move `index` over to
-     * `number`.
-     */
-
+    /* If `callback` returns a `number`, move `index` over to
+     * `number`. */
     if (typeof result === 'number') {
       /* Make sure that negative numbers do not break the loop. */
       if (result < 0) {
@@ -91,36 +63,11 @@ function iterate(values, callback, context) {
   }
 }
 
-},{"has":18}],3:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module bail
- * @fileoverview Throw a given error.
- */
-
+},{}],3:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = bail;
 
-/**
- * Throw a given error.
- *
- * @example
- *   bail();
- *
- * @example
- *   bail(new Error('failure'));
- *   // Error: failure
- *   //     at repl:1:6
- *   //     at REPLServer.defaultEval (repl.js:154:27)
- *   //     ...
- *
- * @param {Error?} [err] - Optional error.
- * @throws {Error} - `err`, when given.
- */
 function bail(err) {
   if (err) {
     throw err;
@@ -128,33 +75,10 @@ function bail(err) {
 }
 
 },{}],4:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module ccount
- * @fileoverview Count characters.
- */
-
 'use strict';
 
-/* Expose. */
 module.exports = ccount;
 
-/**
- * Count how many characters `character` occur in `value`.
- *
- * @example
- *   ccount('foo(bar(baz)', '(') // 2
- *   ccount('foo(bar(baz)', ')') // 1
- *
- * @param {string} value - Content, coerced to string.
- * @param {string} character - Single character to look
- *   for.
- * @return {number} - Count.
- * @throws {Error} - when `character` is not a single
- *   character.
- */
 function ccount(value, character) {
   var count = 0;
   var index;
@@ -432,20 +356,6 @@ module.exports={
 }
 
 },{}],6:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module character-entities-html4
- * @fileoverview HTML4 character entity information.
- */
-
-'use strict';
-
-/* Expose. */
-module.exports = require('./index.json');
-
-},{"./index.json":5}],7:[function(require,module,exports){
 module.exports={
   "AElig": "Æ",
   "AMP": "&",
@@ -555,21 +465,7 @@ module.exports={
   "yuml": "ÿ"
 }
 
-},{}],8:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module character-entities-legacy
- * @fileoverview HTML legacy character entity information.
- */
-
-'use strict';
-
-/* Expose. */
-module.exports = require('./index.json');
-
-},{"./index.json":7}],9:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 module.exports={
   "AEli": "Æ",
   "AElig": "Æ",
@@ -2795,21 +2691,7 @@ module.exports={
   "zwnj": "‌"
 }
 
-},{}],10:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module character-entities
- * @fileoverview HTML character entity information.
- */
-
-'use strict';
-
-/* Expose. */
-module.exports = require('./index.json');
-
-},{"./index.json":9}],11:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 module.exports={
   "0": "�",
   "128": "€",
@@ -2841,354 +2723,17 @@ module.exports={
   "159": "Ÿ"
 }
 
-},{}],12:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module character-reference-invalid
- * @fileoverview HTML invalid numeric character reference information.
- */
-
+},{}],9:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
-module.exports = require('./index.json');
-
-},{"./index.json":11}],13:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module collapse-white-space
- * @fileoverview Replace multiple white-space characters
- *   with a single space.
- */
-
-'use strict';
-
-/* Expose. */
 module.exports = collapse;
 
-/**
- * Replace multiple white-space characters with a single space.
- *
- * @example
- *   collapse(' \t\nbar \nbaz\t'); // ' bar baz '
- *
- * @param {string} value - Value with uncollapsed white-space,
- *   coerced to string.
- * @return {string} - Value with collapsed white-space.
- */
+/* collapse(' \t\nbar \nbaz\t'); // ' bar baz ' */
 function collapse(value) {
   return String(value).replace(/\s+/g, ' ');
 }
 
-},{}],14:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
-}
-module.exports = EventEmitter;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!isNumber(n) || n < 0 || isNaN(n))
-    throw TypeError('n must be a positive number');
-  this._maxListeners = n;
-  return this;
-};
-
-EventEmitter.prototype.emit = function(type) {
-  var er, handler, len, args, i, listeners;
-
-  if (!this._events)
-    this._events = {};
-
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
-      er = arguments[1];
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
-      } else {
-        // At least give some kind of context to the user
-        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
-        err.context = er;
-        throw err;
-      }
-    }
-  }
-
-  handler = this._events[type];
-
-  if (isUndefined(handler))
-    return false;
-
-  if (isFunction(handler)) {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-  } else if (isObject(handler)) {
-    args = Array.prototype.slice.call(arguments, 1);
-    listeners = handler.slice();
-    len = listeners.length;
-    for (i = 0; i < len; i++)
-      listeners[i].apply(this, args);
-  }
-
-  return true;
-};
-
-EventEmitter.prototype.addListener = function(type, listener) {
-  var m;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events)
-    this._events = {};
-
-  // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
-  if (this._events.newListener)
-    this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
-
-  if (!this._events[type])
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  else if (isObject(this._events[type]))
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  else
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-
-  // Check for listener leak
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
-    } else {
-      m = EventEmitter.defaultMaxListeners;
-    }
-
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
-      if (typeof console.trace === 'function') {
-        // not supported in IE 10
-        console.trace();
-      }
-    }
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  var fired = false;
-
-  function g() {
-    this.removeListener(type, g);
-
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
-  }
-
-  g.listener = listener;
-  this.on(type, g);
-
-  return this;
-};
-
-// emits a 'removeListener' event iff the listener was removed
-EventEmitter.prototype.removeListener = function(type, listener) {
-  var list, position, length, i;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events || !this._events[type])
-    return this;
-
-  list = this._events[type];
-  length = list.length;
-  position = -1;
-
-  if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
-    delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0)
-      return this;
-
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
-
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  var key, listeners;
-
-  if (!this._events)
-    return this;
-
-  // not listening for removeListener, no need to emit
-  if (!this._events.removeListener) {
-    if (arguments.length === 0)
-      this._events = {};
-    else if (this._events[type])
-      delete this._events[type];
-    return this;
-  }
-
-  // emit removeListener for all listeners on all events
-  if (arguments.length === 0) {
-    for (key in this._events) {
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-    this.removeAllListeners('removeListener');
-    this._events = {};
-    return this;
-  }
-
-  listeners = this._events[type];
-
-  if (isFunction(listeners)) {
-    this.removeListener(type, listeners);
-  } else if (listeners) {
-    // LIFO order
-    while (listeners.length)
-      this.removeListener(type, listeners[listeners.length - 1]);
-  }
-  delete this._events[type];
-
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  var ret;
-  if (!this._events || !this._events[type])
-    ret = [];
-  else if (isFunction(this._events[type]))
-    ret = [this._events[type]];
-  else
-    ret = this._events[type].slice();
-  return ret;
-};
-
-EventEmitter.prototype.listenerCount = function(type) {
-  if (this._events) {
-    var evlistener = this._events[type];
-
-    if (isFunction(evlistener))
-      return 1;
-    else if (evlistener)
-      return evlistener.length;
-  }
-  return 0;
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  return emitter.listenerCount(type);
-};
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-
-},{}],15:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 var hasOwn = Object.prototype.hasOwnProperty;
@@ -3217,17 +2762,17 @@ var isPlainObject = function isPlainObject(obj) {
 	// Own properties are enumerated firstly, so to speed up,
 	// if last one is own, then all properties are own.
 	var key;
-	for (key in obj) {/**/}
+	for (key in obj) { /**/ }
 
 	return typeof key === 'undefined' || hasOwn.call(obj, key);
 };
 
 module.exports = function extend() {
-	var options, name, src, copy, copyIsArray, clone,
-		target = arguments[0],
-		i = 1,
-		length = arguments.length,
-		deep = false;
+	var options, name, src, copy, copyIsArray, clone;
+	var target = arguments[0];
+	var i = 1;
+	var length = arguments.length;
+	var deep = false;
 
 	// Handle a deep copy situation
 	if (typeof target === 'boolean') {
@@ -3235,7 +2780,8 @@ module.exports = function extend() {
 		target = arguments[1] || {};
 		// skip the boolean and the target
 		i = 2;
-	} else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
+	}
+	if (target == null || (typeof target !== 'object' && typeof target !== 'function')) {
 		target = {};
 	}
 
@@ -3275,68 +2821,7 @@ module.exports = function extend() {
 	return target;
 };
 
-
-},{}],16:[function(require,module,exports){
-var ERROR_MESSAGE = 'Function.prototype.bind called on incompatible ';
-var slice = Array.prototype.slice;
-var toStr = Object.prototype.toString;
-var funcType = '[object Function]';
-
-module.exports = function bind(that) {
-    var target = this;
-    if (typeof target !== 'function' || toStr.call(target) !== funcType) {
-        throw new TypeError(ERROR_MESSAGE + target);
-    }
-    var args = slice.call(arguments, 1);
-
-    var bound;
-    var binder = function () {
-        if (this instanceof bound) {
-            var result = target.apply(
-                this,
-                args.concat(slice.call(arguments))
-            );
-            if (Object(result) === result) {
-                return result;
-            }
-            return this;
-        } else {
-            return target.apply(
-                that,
-                args.concat(slice.call(arguments))
-            );
-        }
-    };
-
-    var boundLength = Math.max(0, target.length - args.length);
-    var boundArgs = [];
-    for (var i = 0; i < boundLength; i++) {
-        boundArgs.push('$' + i);
-    }
-
-    bound = Function('binder', 'return function (' + boundArgs.join(',') + '){ return binder.apply(this,arguments); }')(binder);
-
-    if (target.prototype) {
-        var Empty = function Empty() {};
-        Empty.prototype = target.prototype;
-        bound.prototype = new Empty();
-        Empty.prototype = null;
-    }
-
-    return bound;
-};
-
-},{}],17:[function(require,module,exports){
-var implementation = require('./implementation');
-
-module.exports = Function.prototype.bind || implementation;
-
-},{"./implementation":16}],18:[function(require,module,exports){
-var bind = require('function-bind');
-
-module.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
-
-},{"function-bind":17}],19:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -3361,29 +2846,13 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],20:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2016 Titus Wormer
- * @license MIT
- * @module is-alphabetical
- * @fileoverview Check if a character is alphabetical.
- */
-
+},{}],12:[function(require,module,exports){
 'use strict';
 
-/* eslint-env commonjs */
-
-/* Expose. */
 module.exports = alphabetical;
 
-/**
- * Check whether the given character code, or the character
- * code at the first character, is alphabetical.
- *
- * @param {string|number} character
- * @return {boolean} - Whether `character` is alphabetical.
- */
+/* Check if the given character code, or the character
+ * code at the first character, is alphabetical. */
 function alphabetical(character) {
   var code = typeof character === 'string' ?
     character.charCodeAt(0) : character;
@@ -3392,7 +2861,7 @@ function alphabetical(character) {
     (code >= 65 && code <= 90); /* A-Z */
 }
 
-},{}],21:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 module.exports = function (str) {
 	if (typeof str !== 'string') {
@@ -3402,38 +2871,21 @@ module.exports = function (str) {
 	return !/[^0-9a-z\xDF-\xFF]/.test(str.toLowerCase());
 };
 
-},{}],22:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2016 Titus Wormer
- * @license MIT
- * @module is-alphanumerical
- * @fileoverview Check if a character is alphanumerical.
- */
-
+},{}],14:[function(require,module,exports){
 'use strict';
 
-/* eslint-env commonjs */
-
-/* Dependencies. */
 var alphabetical = require('is-alphabetical');
 var decimal = require('is-decimal');
 
-/* Expose. */
 module.exports = alphanumerical;
 
-/**
- * Check whether the given character code, or the character
- * code at the first character, is alphanumerical.
- *
- * @param {string|number} character
- * @return {boolean} - Whether `character` is alphanumerical.
- */
+/* Check if the given character code, or the character
+ * code at the first character, is alphanumerical. */
 function alphanumerical(character) {
   return alphabetical(character) || decimal(character);
 }
 
-},{"is-alphabetical":20,"is-decimal":24}],23:[function(require,module,exports){
+},{"is-alphabetical":12,"is-decimal":16}],15:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -3456,29 +2908,13 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],24:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2016 Titus Wormer
- * @license MIT
- * @module is-decimal
- * @fileoverview Check if a character is decimal.
- */
-
+},{}],16:[function(require,module,exports){
 'use strict';
 
-/* eslint-env commonjs */
-
-/* Expose. */
 module.exports = decimal;
 
-/**
- * Check whether the given character code, or the character
- * code at the first character, is decimal.
- *
- * @param {string|number} character
- * @return {boolean} - Whether `character` is decimal.
- */
+/* Check if the given character code, or the character
+ * code at the first character, is decimal. */
 function decimal(character) {
   var code = typeof character === 'string' ?
     character.charCodeAt(0) : character;
@@ -3486,29 +2922,13 @@ function decimal(character) {
   return code >= 48 && code <= 57; /* 0-9 */
 }
 
-},{}],25:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2016 Titus Wormer
- * @license MIT
- * @module is-hexadecimal
- * @fileoverview Check if a character is hexadecimal.
- */
-
+},{}],17:[function(require,module,exports){
 'use strict';
 
-/* eslint-env commonjs */
-
-/* Expose. */
 module.exports = hexadecimal;
 
-/**
- * Check whether the given character code, or the character
- * code at the first character, is hexadecimal.
- *
- * @param {string|number} character
- * @return {boolean} - Whether `character` is hexadecimal.
- */
+/* Check if the given character code, or the character
+ * code at the first character, is hexadecimal. */
 function hexadecimal(character) {
   var code = typeof character === 'string' ?
     character.charCodeAt(0) : character;
@@ -3518,146 +2938,91 @@ function hexadecimal(character) {
     (code >= 48 /* A */ && code <= 57 /* Z */);
 }
 
-},{}],26:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2016 Titus Wormer
- * @license MIT
- * @module is-whitespace-character
- * @fileoverview Check if a character is a whitespace character.
- */
+},{}],18:[function(require,module,exports){
+'use strict';
+var toString = Object.prototype.toString;
 
+module.exports = function (x) {
+	var prototype;
+	return toString.call(x) === '[object Object]' && (prototype = Object.getPrototypeOf(x), prototype === null || prototype === Object.getPrototypeOf({}));
+};
+
+},{}],19:[function(require,module,exports){
 'use strict';
 
-/* eslint-env commonjs */
-
-/* Expose. */
 module.exports = whitespace;
 
-/* Methods. */
 var fromCode = String.fromCharCode;
-
-/* Constants. */
 var re = /\s/;
 
-/**
- * Check whether the given character code, or the character
- * code at the first character, is a whitespace character.
- *
- * @param {string|number} character
- * @return {boolean} - Whether `character` is a whitespaces character.
- */
+/* Check if the given character code, or the character
+ * code at the first character, is a whitespace character. */
 function whitespace(character) {
   return re.test(
     typeof character === 'number' ? fromCode(character) : character.charAt(0)
   );
 }
 
-},{}],27:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2016 Titus Wormer
- * @license MIT
- * @module is-word-character
- * @fileoverview Check if a character is a word character.
- */
-
+},{}],20:[function(require,module,exports){
 'use strict';
 
-/* eslint-env commonjs */
-
-/* Expose. */
 module.exports = wordCharacter;
 
-/* Methods. */
 var fromCode = String.fromCharCode;
-
-/* Constants. */
 var re = /\w/;
 
-/**
- * Check whether the given character code, or the character
- * code at the first character, is a word character.
- *
- * @param {string|number} character
- * @return {boolean} - Whether `character` is a word character.
- */
+/* Check if the given character code, or the character
+ * code at the first character, is a word character. */
 function wordCharacter(character) {
   return re.test(
     typeof character === 'number' ? fromCode(character) : character.charAt(0)
   );
 }
 
-},{}],28:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
-
-/**
- * Get the count of the longest repeating streak of
- * `character` in `value`.
- *
- * @example
- *   longestStreak('` foo `` bar `', '`') // 2
- *
- * @param {string} value - Content, coerced to string.
- * @param {string} character - Single character to look
- *   for.
- * @return {number} - Number of characters at the place
- *   where `character` occurs in its longest streak in
- *   `value`.
- * @throws {Error} - when `character` is not a single
- *   character.
- */
-function longestStreak(value, character) {
-    var count = 0;
-    var maximum = 0;
-    var index = -1;
-    var length;
-
-    value = String(value);
-    length = value.length;
-
-    if (typeof character !== 'string' || character.length !== 1) {
-        throw new Error('Expected character');
-    }
-
-    while (++index < length) {
-        if (value.charAt(index) === character) {
-            count++;
-
-            if (count > maximum) {
-                maximum = count;
-            }
-        } else {
-            count = 0;
-        }
-    }
-
-    return maximum;
-}
-
-/*
- * Expose.
- */
-
-module.exports = longestStreak;
-
-},{}],29:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2016 Titus Wormer
- * @license MIT
- * @module markdown-escapes
- * @fileoverview List of escapable characters in markdown.
- */
-
-'use strict';
-
-/* eslint-env commonjs */
 
 /* Expose. */
+module.exports = longestStreak;
+
+/* Get the count of the longest repeating streak of
+ * `character` in `value`. */
+function longestStreak(value, character) {
+  var count = 0;
+  var maximum = 0;
+  var expected;
+  var index;
+
+  if (typeof character !== 'string' || character.length !== 1) {
+    throw new Error('Expected character');
+  }
+
+  value = String(value);
+  expected = index = value.indexOf(character);
+
+  while (index !== -1) {
+    count++;
+
+    if (index === expected) {
+      if (count > maximum) {
+        maximum = count;
+      }
+    } else {
+      count = 1;
+    }
+
+    expected = index + 1;
+    index = value.indexOf(character, expected);
+  }
+
+  return maximum;
+}
+
+},{}],22:[function(require,module,exports){
+'use strict';
+
 module.exports = escapes;
 
-/* Characters. */
 var defaults = [
   '\\',
   '`',
@@ -3697,17 +3062,11 @@ var commonmark = gfm.concat([
   '^'
 ]);
 
-/* Expose characters. */
 escapes.default = defaults;
 escapes.gfm = gfm;
 escapes.commonmark = commonmark;
 
-/**
- * Get markdown escapes.
- *
- * @param {Object?} [options] - Configuration.
- * @return {Array.<string>} - Escapes.
- */
+/* Get markdown escapes. */
 function escapes(options) {
   var settings = options || {};
 
@@ -3718,18 +3077,10 @@ function escapes(options) {
   return settings.gfm ? gfm : defaults;
 }
 
-},{}],30:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2014 Titus Wormer
- * @license MIT
- * @module markdown-table
- * @fileoverview Count syllables in English words.
- */
-
+},{}],23:[function(require,module,exports){
 'use strict';
 
-/* Expose `markdownTable`. */
+/* Expose. */
 module.exports = markdownTable;
 
 /* Expressions. */
@@ -3744,6 +3095,7 @@ var DOT = '.';
 var NULL = '';
 
 var ALLIGNMENT = [LEFT, RIGHT, CENTER, DOT, NULL];
+var MIN_CELL_SIZE = 3;
 
 /* Characters. */
 var COLON = ':';
@@ -3752,19 +3104,7 @@ var PIPE = '|';
 var SPACE = ' ';
 var NEW_LINE = '\n';
 
-/**
- * Create a table from a matrix of strings.
- *
- * @param {Array.<Array.<string>>} table
- * @param {Object?} options
- * @param {boolean?} [options.rule=true]
- * @param {string?} [options.delimiter=" | "]
- * @param {string?} [options.start="| "]
- * @param {string?} [options.end=" |"]
- * @param {Array.<string>?} options.align
- * @param {function(string)?} options.stringLength
- * @return {string} Pretty table
- */
+/* Create a table from a matrix of strings. */
 function markdownTable(table, options) {
   var settings = options || {};
   var delimiter = settings.delimiter;
@@ -3816,7 +3156,7 @@ function markdownTable(table, options) {
       position = row[index] ? dotindex(row[index]) : null;
 
       if (!sizes[index]) {
-        sizes[index] = 3;
+        sizes[index] = MIN_CELL_SIZE;
       }
 
       if (position > sizes[index]) {
@@ -3858,11 +3198,7 @@ function markdownTable(table, options) {
     while (++index < cellCount) {
       value = row[index];
 
-      if (value === null || value === undefined) {
-        value = '';
-      } else {
-        value = String(value);
-      }
+      value = stringify(value);
 
       if (alignment[index] === DOT) {
         position = dotindex(value);
@@ -3892,7 +3228,7 @@ function markdownTable(table, options) {
       value = cells[index];
 
       if (!sizes[index]) {
-        sizes[index] = 3;
+        sizes[index] = MIN_CELL_SIZE;
       }
 
       size = calculateStringLength(value);
@@ -3910,31 +3246,33 @@ function markdownTable(table, options) {
 
     index = -1;
 
-    while (++index < cellCount) {
-      value = cells[index];
+    if (settings.pad !== false) {
+      while (++index < cellCount) {
+        value = cells[index];
 
-      position = sizes[index] - (calculateStringLength(value) || 0);
-      spacing = pad(position);
+        position = sizes[index] - (calculateStringLength(value) || 0);
+        spacing = pad(position);
 
-      if (alignment[index] === RIGHT || alignment[index] === DOT) {
-        value = spacing + value;
-      } else if (alignment[index] === CENTER) {
-        position /= 2;
+        if (alignment[index] === RIGHT || alignment[index] === DOT) {
+          value = spacing + value;
+        } else if (alignment[index] === CENTER) {
+          position /= 2;
 
-        if (position % 1 === 0) {
-          before = position;
-          after = position;
+          if (position % 1 === 0) {
+            before = position;
+            after = position;
+          } else {
+            before = position + 0.5;
+            after = position - 0.5;
+          }
+
+          value = pad(before) + value + pad(after);
         } else {
-          before = position + 0.5;
-          after = position - 0.5;
+          value += spacing;
         }
 
-        value = pad(before) + value + pad(after);
-      } else {
-        value += spacing;
+        cells[index] = value;
       }
-
-      cells[index] = value;
     }
 
     rows[rowIndex] = cells.join(delimiter);
@@ -3945,11 +3283,20 @@ function markdownTable(table, options) {
     rule = [];
 
     while (++index < cellCount) {
+      /* When `pad` is false, make the rule the same size as the first row. */
+      if (settings.pad === false) {
+        value = table[0][index];
+        spacing = calculateStringLength(stringify(value));
+        spacing = spacing > MIN_CELL_SIZE ? spacing : MIN_CELL_SIZE;
+      } else {
+        spacing = sizes[index];
+      }
+
       align = alignment[index];
 
       /* When `align` is left, don't add colons. */
       value = align === RIGHT || align === NULL ? DASH : COLON;
-      value += pad(sizes[index] - 2, DASH);
+      value += pad(spacing - 2, DASH);
       value += align !== LEFT && align !== NULL ? COLON : DASH;
 
       rule[index] = value;
@@ -3961,51 +3308,29 @@ function markdownTable(table, options) {
   return start + rows.join(end + NEW_LINE + start) + end;
 }
 
-/**
- * Get the length of `value`.
- *
- * @param {string} value
- * @return {number}
- */
+function stringify(value) {
+  return (value === null || value === undefined) ? '' : String(value);
+}
+
+/* Get the length of `value`. */
 function lengthNoop(value) {
   return String(value).length;
 }
 
-/**
- * Get a string consisting of `length` `character`s.
- *
- * @param {number} length
- * @param {string} [character=' ']
- * @return {string}
- */
+/* Get a string consisting of `length` `character`s. */
 function pad(length, character) {
   return Array(length + 1).join(character || SPACE);
 }
 
-/**
- * Get the position of the last dot in `value`.
- *
- * @param {string} value
- * @return {number}
- */
+/* Get the position of the last dot in `value`. */
 function dotindex(value) {
   var match = EXPRESSION_LAST_DOT.exec(value);
 
   return match ? match.index + 1 : value.length;
 }
 
-},{}],31:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2016 Titus Wormer
- * @license MIT
- * @module mdast:util:compact
- * @fileoverview Make an MDAST tree compact.
- */
-
+},{}],24:[function(require,module,exports){
 'use strict';
-
-/* eslint-env commonjs */
 
 /* Dependencies. */
 var visit = require('unist-util-visit');
@@ -4014,13 +3339,8 @@ var modify = require('unist-util-modify-children');
 /* Expose. */
 module.exports = compact;
 
-/**
- * Make an MDAST tree compact by merging adjacent text
- * nodes.
- *
- * @param {Node} tree - Node.
- * @return {Node} - Node without `position`s.
- */
+/* Make an MDAST tree compact by merging adjacent text
+ * nodes. */
 function compact(tree, commonmark) {
   var modifier = modify(iterator);
 
@@ -4083,64 +3403,10 @@ function mergeable(node, commonmark) {
   return commonmark && node.type === 'blockquote';
 }
 
-},{"unist-util-modify-children":146,"unist-util-visit":149}],32:[function(require,module,exports){
-var wrappy = require('wrappy')
-module.exports = wrappy(once)
-module.exports.strict = wrappy(onceStrict)
-
-once.proto = once(function () {
-  Object.defineProperty(Function.prototype, 'once', {
-    value: function () {
-      return once(this)
-    },
-    configurable: true
-  })
-
-  Object.defineProperty(Function.prototype, 'onceStrict', {
-    value: function () {
-      return onceStrict(this)
-    },
-    configurable: true
-  })
-})
-
-function once (fn) {
-  var f = function () {
-    if (f.called) return f.value
-    f.called = true
-    return f.value = fn.apply(this, arguments)
-  }
-  f.called = false
-  return f
-}
-
-function onceStrict (fn) {
-  var f = function () {
-    if (f.called)
-      throw new Error(f.onceError)
-    f.called = true
-    return f.value = fn.apply(this, arguments)
-  }
-  var name = fn.name || 'Function wrapped with `once`'
-  f.onceError = name + " shouldn't be called more than once"
-  f.called = false
-  return f
-}
-
-},{"wrappy":152}],33:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module parse-entities
- * @fileoverview Parse HTML character references: fast, spec-compliant,
- *   positional information.
- */
-
+},{"unist-util-modify-children":132,"unist-util-visit":135}],25:[function(require,module,exports){
 'use strict';
 
 /* Dependencies. */
-var has = require('has');
 var characterEntities = require('character-entities');
 var legacy = require('character-entities-legacy');
 var invalid = require('character-reference-invalid');
@@ -4152,6 +3418,7 @@ var alphanumerical = require('is-alphanumerical');
 module.exports = wrapper;
 
 /* Methods. */
+var own = {}.hasOwnProperty;
 var fromCharCode = String.fromCharCode;
 var noop = Function.prototype;
 
@@ -4230,14 +3497,10 @@ MESSAGES[NUMERIC_DISALLOWED] = NUMERIC_REFERENCE + ' cannot be disallowed';
 MESSAGES[NUMERIC_PROHIBITED] = NUMERIC_REFERENCE + ' cannot be outside the ' +
     'permissible Unicode range';
 
-/**
- * Wrap to ensure clean parameters are given to `parse`.
- *
- * @param {string} value - Value with entities.
- * @param {Object?} [options] - Configuration.
- */
+/* Wrap to ensure clean parameters are given to `parse`. */
 function wrapper(value, options) {
   var settings = {};
+  var option;
   var key;
 
   if (!options) {
@@ -4245,7 +3508,8 @@ function wrapper(value, options) {
   }
 
   for (key in defaults) {
-    settings[key] = options[key] == null ? defaults[key] : options[key];
+    option = options[key];
+    settings[key] = option === null || option === undefined ? defaults[key] : option;
   }
 
   if (settings.position.indent || settings.position.start) {
@@ -4256,12 +3520,7 @@ function wrapper(value, options) {
   return parse(value, settings);
 }
 
-/**
- * Parse entities.
- *
- * @param {string} value - Value to tokenise.
- * @param {Object?} [settings] - Configuration.
- */
+/* Parse entities. */
 function parse(value, settings) {
   var additional = settings.additional;
   var nonTerminated = settings.nonTerminated;
@@ -4357,7 +3616,9 @@ function parse(value, settings) {
         continue;
       }
 
-      start = begin = end = index + 1;
+      start = index + 1;
+      begin = start;
+      end = start;
 
       /* Numerical entity. */
       if (following !== OCTOTHORP) {
@@ -4379,7 +3640,9 @@ function parse(value, settings) {
         }
       }
 
-      entityCharacters = entity = characters = EMPTY;
+      entityCharacters = EMPTY;
+      entity = EMPTY;
+      characters = EMPTY;
       test = TESTS[type];
       end--;
 
@@ -4397,7 +3660,7 @@ function parse(value, settings) {
          * last viable named reference.  This
          * ensures we do not need to walk backwards
          * later. */
-        if (type === NAMED && has(legacy, characters)) {
+        if (type === NAMED && own.call(legacy, characters)) {
           entityCharacters = characters;
           entity = legacy[characters];
         }
@@ -4408,7 +3671,7 @@ function parse(value, settings) {
       if (terminated) {
         end++;
 
-        if (type === NAMED && has(characterEntities, characters)) {
+        if (type === NAMED && own.call(characterEntities, characters)) {
           entityCharacters = characters;
           entity = characterEntities[characters];
         }
@@ -4549,12 +3812,7 @@ function parse(value, settings) {
   /* Return the reduced nodes, and any possible warnings. */
   return result.join(EMPTY);
 
-  /**
-   * Get current position.
-   *
-   * @return {Object} - Positional information of a
-   *   single point.
-   */
+  /* Get current position. */
   function now() {
     return {
       line: line,
@@ -4563,15 +3821,7 @@ function parse(value, settings) {
     };
   }
 
-  /**
-   * “Throw” a parse-error: a warning.
-   *
-   * @param {number} code - Identifier of reason for
-   *   failing.
-   * @param {number} offset - Offset in characters from
-   *   the current position point at which the
-   *   parse-error ocurred, cannot point past newlines.
-   */
+  /* “Throw” a parse-error: a warning. */
   function parseError(code, offset) {
     var position = now();
 
@@ -4581,23 +3831,14 @@ function parse(value, settings) {
     handleWarning.call(warningContext, MESSAGES[code], position, code);
   }
 
-  /**
-   * Get character at position.
-   *
-   * @param {number} position - Indice of character in `value`.
-   * @return {string} - Character at `position` in
-   *   `value`.
-   */
+  /* Get character at position. */
   function at(position) {
     return value.charAt(position);
   }
 
-  /**
-   * Flush `queue` (normal text). Macro invoked before
+  /* Flush `queue` (normal text). Macro invoked before
    * each entity and at the end of `value`.
-   *
-   * Does nothing when `queue` is empty.
-   */
+   * Does nothing when `queue` is empty. */
   function flush() {
     if (queue) {
       result.push(queue);
@@ -4614,24 +3855,13 @@ function parse(value, settings) {
   }
 }
 
-/**
- * Check whether `character` is outside the permissible
- * unicode range.
- *
- * @param {number} code - Value.
- * @return {boolean} - Whether `character` is an
- *   outside the permissible unicode range.
- */
+/* Check if `character` is outside the permissible
+ * unicode range. */
 function isProhibited(code) {
   return (code >= 0xD800 && code <= 0xDFFF) || (code > 0x10FFFF);
 }
 
-/**
- * Check whether `character` is disallowed.
- *
- * @param {number} code - Value.
- * @return {boolean} - Whether `character` is disallowed.
- */
+/* Check if `character` is disallowed. */
 function isWarning(code) {
   if (
     (code >= 0x0001 && code <= 0x0008) ||
@@ -4648,7 +3878,7 @@ function isWarning(code) {
   return false;
 }
 
-},{"character-entities":10,"character-entities-legacy":8,"character-reference-invalid":12,"has":18,"is-alphanumerical":22,"is-decimal":24,"is-hexadecimal":25}],34:[function(require,module,exports){
+},{"character-entities":7,"character-entities-legacy":6,"character-reference-invalid":8,"is-alphanumerical":14,"is-decimal":16,"is-hexadecimal":17}],26:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -4876,7 +4106,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":35}],35:[function(require,module,exports){
+},{"_process":27}],27:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -5047,6 +4277,10 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
@@ -5058,122 +4292,106 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],36:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse
- * @fileoverview Markdown parser.
- */
-
+},{}],28:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var unherit = require('unherit');
+var xtend = require('xtend');
 var Parser = require('./lib/parser.js');
 
-/* Expose */
-module.exports = exports = parse;
-exports.Parser = Parser;
+module.exports = parse;
+parse.Parser = Parser;
 
-/**
- * Attacher.
- *
- * @param {unified} processor - Unified processor.
- */
-function parse(processor) {
-  processor.Parser = unherit(Parser);
+function parse(options) {
+  var Local = unherit(Parser);
+  Local.prototype.options = xtend(Local.prototype.options, this.data('settings'), options);
+  this.Parser = Local;
 }
 
-},{"./lib/parser.js":50,"unherit":144}],37:[function(require,module,exports){
+},{"./lib/parser.js":42,"unherit":130,"xtend":140}],29:[function(require,module,exports){
 module.exports=[
+  "address",
   "article",
-  "header",
   "aside",
-  "hgroup",
+  "base",
+  "basefont",
   "blockquote",
-  "hr",
-  "iframe",
   "body",
-  "li",
-  "map",
-  "button",
-  "object",
-  "canvas",
-  "ol",
   "caption",
-  "output",
+  "center",
   "col",
-  "p",
   "colgroup",
-  "pre",
   "dd",
-  "progress",
+  "details",
+  "dialog",
+  "dir",
   "div",
-  "section",
   "dl",
-  "table",
-  "td",
   "dt",
-  "tbody",
-  "embed",
-  "textarea",
   "fieldset",
-  "tfoot",
   "figcaption",
-  "th",
   "figure",
-  "thead",
   "footer",
-  "tr",
   "form",
-  "ul",
+  "frame",
+  "frameset",
   "h1",
   "h2",
   "h3",
   "h4",
   "h5",
   "h6",
-  "video",
-  "script",
-  "style"
+  "head",
+  "header",
+  "hgroup",
+  "hr",
+  "html",
+  "iframe",
+  "legend",
+  "li",
+  "link",
+  "main",
+  "menu",
+  "menuitem",
+  "meta",
+  "nav",
+  "noframes",
+  "ol",
+  "optgroup",
+  "option",
+  "p",
+  "param",
+  "pre",
+  "section",
+  "source",
+  "title",
+  "summary",
+  "table",
+  "tbody",
+  "td",
+  "tfoot",
+  "th",
+  "thead",
+  "title",
+  "tr",
+  "track",
+  "ul"
 ]
 
-},{}],38:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:decode
- * @fileoverview Decode entities.
- */
-
+},{}],30:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var entities = require('parse-entities');
 
-/* Expose. */
 module.exports = factory;
 
-/**
- * Factory to create an entity decoder.
- *
- * @param {Object} ctx - Context to attach to.
- * @return {Function} - See `decode`.
- */
+/* Factory to create an entity decoder. */
 function factory(ctx) {
   decoder.raw = decodeRaw;
 
   return decoder;
 
-  /**
-   * Normalize `position` to add an `indent`.
-   *
-   * @param {Position} position - Reference
-   * @return {Position} - Augmented with `indent`.
-   */
+  /* Normalize `position` to add an `indent`. */
   function normalize(position) {
     var offsets = ctx.offset;
     var line = position.line;
@@ -5193,14 +4411,9 @@ function factory(ctx) {
     };
   }
 
-  /**
-   * Handle a warning.
-   *
-   * @this {VFile} - Virtual file.
-   * @param {string} reason - Reason for warning.
-   * @param {Position} position - Place of warning.
-   * @param {number} code - Code for warning.
-   */
+  /* Handle a warning.
+   * See https://github.com/wooorm/parse-entities
+   * for the warnings. */
   function handleWarning(reason, position, code) {
     if (code === 3) {
       return;
@@ -5209,13 +4422,7 @@ function factory(ctx) {
     ctx.file.message(reason, position);
   }
 
-  /**
-   * Decode `value` (at `position`) into text-nodes.
-   *
-   * @param {string} value - Value to parse.
-   * @param {Position} position - Position to start parsing at.
-   * @param {Function} handler - Node handler.
-   */
+  /* Decode `value` (at `position`) into text-nodes. */
   function decoder(value, position, handler) {
     entities(value, {
       position: normalize(position),
@@ -5227,14 +4434,7 @@ function factory(ctx) {
     });
   }
 
-  /**
-   * Decode `value` (at `position`) into a string.
-   *
-   * @param {string} value - Value to parse.
-   * @param {Position} position - Position to start
-   *   parsing at.
-   * @return {string} - Plain-text.
-   */
+  /* Decode `value` (at `position`) into a string. */
   function decodeRaw(value, position) {
     return entities(value, {
       position: normalize(position),
@@ -5243,50 +4443,23 @@ function factory(ctx) {
   }
 }
 
-},{"parse-entities":33}],39:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:defaults
- * @fileoverview Default options for `parse`.
- */
-
+},{"parse-entities":25}],31:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = {
   position: true,
   gfm: true,
-  yaml: true,
   commonmark: false,
   footnotes: false,
   pedantic: false,
-  blocks: require('./block-elements'),
-  breaks: false
+  blocks: require('./block-elements.json')
 };
 
-},{"./block-elements":37}],40:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:locate:break
- * @fileoverview Locate a break.
- */
-
+},{"./block-elements.json":29}],32:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = locate;
 
-/**
- * Find a possible token.
- *
- * @param {string} value - Value to search.
- * @param {number} fromIndex - Index to start searching at.
- * @return {number} - Location.
- */
 function locate(value, fromIndex) {
   var index = value.indexOf('\n', fromIndex);
 
@@ -5301,77 +4474,29 @@ function locate(value, fromIndex) {
   return index;
 }
 
-},{}],41:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:locate:code-inline
- * @fileoverview Locate inline code.
- */
-
+},{}],33:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = locate;
 
-/**
- * Find a possible token.
- *
- * @param {string} value - Value to search.
- * @param {number} fromIndex - Index to start searching at.
- * @return {number} - Location.
- */
 function locate(value, fromIndex) {
   return value.indexOf('`', fromIndex);
 }
 
-},{}],42:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:locate:delete
- * @fileoverview Locate strikethrough.
- */
-
+},{}],34:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = locate;
 
-/**
- * Find a possible token.
- *
- * @param {string} value - Value to search.
- * @param {number} fromIndex - Index to start searching at.
- * @return {number} - Location.
- */
 function locate(value, fromIndex) {
   return value.indexOf('~~', fromIndex);
 }
 
-},{}],43:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:locate:emphasis
- * @fileoverview Locate italics / emphasis.
- */
-
+},{}],35:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = locate;
 
-/**
- * Find a possible token.
- *
- * @param {string} value - Value to search.
- * @param {number} fromIndex - Index to start searching at.
- * @return {number} - Location.
- */
 function locate(value, fromIndex) {
   var asterisk = value.indexOf('*', fromIndex);
   var underscore = value.indexOf('_', fromIndex);
@@ -5387,52 +4512,20 @@ function locate(value, fromIndex) {
   return underscore < asterisk ? underscore : asterisk;
 }
 
-},{}],44:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:locate:escape
- * @fileoverview Locate an escape.
- */
-
+},{}],36:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = locate;
 
-/**
- * Find a possible token.
- *
- * @param {string} value - Value to search.
- * @param {number} fromIndex - Index to start searching at.
- * @return {number} - Location.
- */
 function locate(value, fromIndex) {
   return value.indexOf('\\', fromIndex);
 }
 
-},{}],45:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:locate:link
- * @fileoverview Locate a link.
- */
-
+},{}],37:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = locate;
 
-/**
- * Find a possible token.
- *
- * @param {string} value - Value to search.
- * @param {number} fromIndex - Index to start searching at.
- * @return {number} - Location.
- */
 function locate(value, fromIndex) {
   var link = value.indexOf('[', fromIndex);
   var image = value.indexOf('![', fromIndex);
@@ -5446,27 +4539,11 @@ function locate(value, fromIndex) {
   return link < image ? link : image;
 }
 
-},{}],46:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:locate:strong
- * @fileoverview Locate bold / strong / importance.
- */
-
+},{}],38:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = locate;
 
-/**
- * Find a possible token.
- *
- * @param {string} value - Value to search.
- * @param {number} fromIndex - Index to start searching at.
- * @return {number} - Location.
- */
 function locate(value, fromIndex) {
   var asterisk = value.indexOf('**', fromIndex);
   var underscore = value.indexOf('__', fromIndex);
@@ -5482,54 +4559,22 @@ function locate(value, fromIndex) {
   return underscore < asterisk ? underscore : asterisk;
 }
 
-},{}],47:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:locate:tag
- * @fileoverview Locate a tag.
- */
-
+},{}],39:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = locate;
 
-/**
- * Find a possible token.
- *
- * @param {string} value - Value to search.
- * @param {number} fromIndex - Index to start searching at.
- * @return {number} - Location.
- */
 function locate(value, fromIndex) {
   return value.indexOf('<', fromIndex);
 }
 
-},{}],48:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:locate:url
- * @fileoverview Locate a URL.
- */
-
+},{}],40:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = locate;
 
 var PROTOCOLS = ['https://', 'http://', 'mailto:'];
 
-/**
- * Find a possible token.
- *
- * @param {string} value - Value to search.
- * @param {number} fromIndex - Index to start searching at.
- * @return {number} - Location.
- */
 function locate(value, fromIndex) {
   var length = PROTOCOLS.length;
   var index = -1;
@@ -5551,39 +4596,18 @@ function locate(value, fromIndex) {
   return min;
 }
 
-},{}],49:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:parse
- * @fileoverview Parse the document
- */
-
+},{}],41:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var xtend = require('xtend');
 var removePosition = require('unist-util-remove-position');
 
-/* Expose. */
 module.exports = parse;
 
-/* Characters. */
 var C_NEWLINE = '\n';
-
-/* Constants. */
 var EXPRESSION_LINE_BREAKS = /\r\n|\r/g;
 
-/**
- * Parse the bound file.
- *
- * @example
- *   new Parser(new File('_Foo_.')).parse();
- *
- * @this {Parser}
- * @return {Object} - `root` node.
- */
+/* Parse the bound file. */
 function parse() {
   var self = this;
   var value = String(self.file);
@@ -5619,18 +4643,9 @@ function parse() {
   return node;
 }
 
-},{"unist-util-remove-position":147,"xtend":154}],50:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse
- * @fileoverview Markdown parser.
- */
-
+},{"unist-util-remove-position":133,"xtend":140}],42:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var xtend = require('xtend');
 var toggle = require('state-toggle');
 var vfileLocation = require('vfile-location');
@@ -5638,28 +4653,17 @@ var unescape = require('./unescape');
 var decode = require('./decode');
 var tokenizer = require('./tokenizer');
 
-/* Expose `attacher`. */
 module.exports = Parser;
 
-/**
- * Construct a new parser.
- *
- * @example
- *   var parser = new Parser(new VFile('Foo'));
- *
- * @constructor
- * @class {Parser}
- * @param {VFile} file - File to parse.
- * @param {Object?} [options] - Passed to
- *   `Parser#setOptions()`.
- */
-function Parser(file, options) {
+function Parser(doc, file) {
   this.file = file;
   this.offset = {};
   this.options = xtend(this.options);
-  this.setOptions(options);
+  this.setOptions({});
 
-  this.inList = this.inBlock = this.inLink = false;
+  this.inList = false;
+  this.inBlock = false;
+  this.inLink = false;
   this.atStart = true;
 
   this.toOffset = vfileLocation(file).toOffset;
@@ -5667,7 +4671,6 @@ function Parser(file, options) {
   this.decode = decode(this);
 }
 
-/* Prototype. */
 var proto = Parser.prototype;
 
 /* Expose core. */
@@ -5683,9 +4686,65 @@ proto.enterList = toggle('inList', false);
 proto.enterLink = toggle('inLink', false);
 proto.enterBlock = toggle('inBlock', false);
 
+/* Nodes that can interupt a paragraph:
+ *
+ * ```markdown
+ * A paragraph, followed by a thematic break.
+ * ___
+ * ```
+ *
+ * In the above example, the thematic break “interupts”
+ * the paragraph. */
+proto.interruptParagraph = [
+  ['thematicBreak'],
+  ['atxHeading'],
+  ['fencedCode'],
+  ['blockquote'],
+  ['html'],
+  ['setextHeading', {commonmark: false}],
+  ['definition', {commonmark: false}],
+  ['footnote', {commonmark: false}]
+];
+
+/* Nodes that can interupt a list:
+ *
+ * ```markdown
+ * - One
+ * ___
+ * ```
+ *
+ * In the above example, the thematic break “interupts”
+ * the list. */
+proto.interruptList = [
+  ['fencedCode', {pedantic: false}],
+  ['thematicBreak', {pedantic: false}],
+  ['definition', {commonmark: false}],
+  ['footnote', {commonmark: false}]
+];
+
+/* Nodes that can interupt a blockquote:
+ *
+ * ```markdown
+ * > A paragraph.
+ * ___
+ * ```
+ *
+ * In the above example, the thematic break “interupts”
+ * the blockquote. */
+proto.interruptBlockquote = [
+  ['indentedCode', {commonmark: true}],
+  ['fencedCode', {commonmark: true}],
+  ['atxHeading', {commonmark: true}],
+  ['setextHeading', {commonmark: true}],
+  ['thematicBreak', {commonmark: true}],
+  ['html', {commonmark: true}],
+  ['list', {commonmark: true}],
+  ['definition', {commonmark: false}],
+  ['footnote', {commonmark: false}]
+];
+
 /* Handlers. */
 proto.blockTokenizers = {
-  yamlFrontMatter: require('./tokenize/yaml'),
   newline: require('./tokenize/newline'),
   indentedCode: require('./tokenize/code-indented'),
   fencedCode: require('./tokenize/code-fenced'),
@@ -5725,9 +4784,7 @@ proto.tokenizeBlock = tokenizer('block');
 proto.tokenizeInline = tokenizer('inline');
 proto.tokenizeFactory = tokenizer;
 
-/**
- * Get all keys in `value`.
- */
+/* Get all keys in `value`. */
 function keys(value) {
   var result = [];
   var key;
@@ -5739,38 +4796,15 @@ function keys(value) {
   return result;
 }
 
-},{"./decode":38,"./defaults":39,"./parse":49,"./set-options":51,"./tokenize/auto-link":52,"./tokenize/blockquote":53,"./tokenize/break":54,"./tokenize/code-fenced":55,"./tokenize/code-indented":56,"./tokenize/code-inline":57,"./tokenize/definition":58,"./tokenize/delete":59,"./tokenize/emphasis":60,"./tokenize/escape":61,"./tokenize/footnote-definition":62,"./tokenize/heading-atx":63,"./tokenize/heading-setext":64,"./tokenize/html-block":65,"./tokenize/html-inline":66,"./tokenize/link":67,"./tokenize/list":68,"./tokenize/newline":69,"./tokenize/paragraph":70,"./tokenize/reference":71,"./tokenize/strong":72,"./tokenize/table":73,"./tokenize/text":74,"./tokenize/thematic-break":75,"./tokenize/url":76,"./tokenize/yaml":77,"./tokenizer":78,"./unescape":79,"state-toggle":137,"vfile-location":150,"xtend":154}],51:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse
- * @fileoverview Markdown parser.
- */
-
+},{"./decode":30,"./defaults":31,"./parse":41,"./set-options":43,"./tokenize/auto-link":44,"./tokenize/blockquote":45,"./tokenize/break":46,"./tokenize/code-fenced":47,"./tokenize/code-indented":48,"./tokenize/code-inline":49,"./tokenize/definition":50,"./tokenize/delete":51,"./tokenize/emphasis":52,"./tokenize/escape":53,"./tokenize/footnote-definition":54,"./tokenize/heading-atx":55,"./tokenize/heading-setext":56,"./tokenize/html-block":57,"./tokenize/html-inline":58,"./tokenize/link":59,"./tokenize/list":60,"./tokenize/newline":61,"./tokenize/paragraph":62,"./tokenize/reference":63,"./tokenize/strong":64,"./tokenize/table":65,"./tokenize/text":66,"./tokenize/thematic-break":67,"./tokenize/url":68,"./tokenizer":69,"./unescape":70,"state-toggle":123,"vfile-location":136,"xtend":140}],43:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var xtend = require('xtend');
 var escapes = require('markdown-escapes');
 var defaults = require('./defaults');
 
-/* Expose `attacher`. */
 module.exports = setOptions;
 
-/**
- * Set options.  Does not overwrite previously set
- * options.
- *
- * @example
- *   var parser = new Parser();
- *   parser.setOptions({gfm: true});
- *
- * @this {Parser}
- * @throws {Error} - When an option is invalid.
- * @param {Object?} [options] - Parse settings.
- * @return {Parser} - `self`.
- */
 function setOptions(options) {
   var self = this;
   var current = self.options;
@@ -5799,10 +4833,7 @@ function setOptions(options) {
       (key !== 'blocks' && typeof value !== 'boolean') ||
       (key === 'blocks' && typeof value !== 'object')
     ) {
-      throw new Error(
-        'Invalid value `' + value + '` ' +
-        'for setting `options.' + key + '`'
-      );
+      throw new Error('Invalid value `' + value + '` for setting `options.' + key + '`');
     }
 
     options[key] = value;
@@ -5814,27 +4845,17 @@ function setOptions(options) {
   return self;
 }
 
-},{"./defaults":39,"markdown-escapes":29,"xtend":154}],52:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:auto-link
- * @fileoverview Tokenise an auto-link.
- */
-
+},{"./defaults":31,"markdown-escapes":22,"xtend":140}],44:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
+var whitespace = require('is-whitespace-character');
 var decode = require('parse-entities');
 var locate = require('../locate/tag');
 
-/* Expose. */
 module.exports = autoLink;
 autoLink.locator = locate;
 autoLink.notInLink = true;
 
-/* Constants. */
 var C_LT = '<';
 var C_GT = '>';
 var C_AT_SIGN = '@';
@@ -5842,15 +4863,7 @@ var C_SLASH = '/';
 var MAILTO = 'mailto:';
 var MAILTO_LENGTH = MAILTO.length;
 
-/**
- * Tokenise a link.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `link` node.
- */
+/* Tokenise a link. */
 function autoLink(eat, value, silent) {
   var self;
   var subvalue;
@@ -5884,7 +4897,7 @@ function autoLink(eat, value, silent) {
     character = value.charAt(index);
 
     if (
-      character === ' ' ||
+      whitespace(character) ||
       character === C_GT ||
       character === C_AT_SIGN ||
       (character === ':' && value.charAt(index + 1) === C_SLASH)
@@ -5924,7 +4937,7 @@ function autoLink(eat, value, silent) {
   while (index < length) {
     character = value.charAt(index);
 
-    if (character === ' ' || character === C_GT) {
+    if (whitespace(character) || character === C_GT) {
       break;
     }
 
@@ -5978,42 +4991,25 @@ function autoLink(eat, value, silent) {
   });
 }
 
-},{"../locate/tag":47,"parse-entities":33}],53:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:blockquote
- * @fileoverview Tokenise blockquote.
- */
-
+},{"../locate/tag":39,"is-whitespace-character":19,"parse-entities":25}],45:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var trim = require('trim');
+var interrupt = require('../util/interrupt');
 
-/* Expose. */
 module.exports = blockquote;
 
-/* Characters */
 var C_NEWLINE = '\n';
 var C_TAB = '\t';
 var C_SPACE = ' ';
 var C_GT = '>';
 
-/**
- * Tokenise a blockquote.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `blockquote` node.
- */
+/* Tokenise a blockquote. */
 function blockquote(eat, value, silent) {
   var self = this;
-  var commonmark = self.options.commonmark;
   var offsets = self.offset;
+  var tokenizers = self.blockTokenizers;
+  var interruptors = self.interruptBlockquote;
   var now = eat.now();
   var currentLine = now.line;
   var length = value.length;
@@ -6021,7 +5017,6 @@ function blockquote(eat, value, silent) {
   var contents = [];
   var indents = [];
   var add;
-  var tokenizers;
   var index = 0;
   var character;
   var rest;
@@ -6050,7 +5045,6 @@ function blockquote(eat, value, silent) {
     return true;
   }
 
-  tokenizers = self.blockTokenizers;
   index = 0;
 
   while (index < length) {
@@ -6093,27 +5087,9 @@ function blockquote(eat, value, silent) {
     if (!prefixed) {
       rest = value.slice(index);
 
-      if (
-        (
-          commonmark &&
-          (
-            tokenizers.indentedCode.call(self, eat, rest, true) ||
-            tokenizers.fencedCode.call(self, eat, rest, true) ||
-            tokenizers.atxHeading.call(self, eat, rest, true) ||
-            tokenizers.setextHeading.call(self, eat, rest, true) ||
-            tokenizers.thematicBreak.call(self, eat, rest, true) ||
-            tokenizers.html.call(self, eat, rest, true) ||
-            tokenizers.list.call(self, eat, rest, true)
-          )
-        ) ||
-        (
-          !commonmark &&
-          (
-            tokenizers.definition.call(self, eat, rest, true) ||
-            tokenizers.footnote.call(self, eat, rest, true)
-          )
-        )
-      ) {
+      /* Check if the following code contains a possible
+       * block. */
+      if (interrupt(interruptors, tokenizers, self, [eat, rest, true])) {
         break;
       }
     }
@@ -6146,39 +5122,17 @@ function blockquote(eat, value, silent) {
   });
 }
 
-},{"trim":142}],54:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:break
- * @fileoverview Tokenise a break.
- */
-
+},{"../util/interrupt":73,"trim":128}],46:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var locate = require('../locate/break');
 
-/* Expose. */
 module.exports = hardBreak;
 hardBreak.locator = locate;
 
-/* Constants. */
 var MIN_BREAK_LENGTH = 2;
 
-/**
- * Tokenise a break.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `break` node.
- */
 function hardBreak(eat, value, silent) {
-  var self = this;
-  var breaks = self.options.breaks;
   var length = value.length;
   var index = -1;
   var queue = '';
@@ -6188,7 +5142,7 @@ function hardBreak(eat, value, silent) {
     character = value.charAt(index);
 
     if (character === '\n') {
-      if (!breaks && index < MIN_BREAK_LENGTH) {
+      if (index < MIN_BREAK_LENGTH) {
         return;
       }
 
@@ -6210,43 +5164,22 @@ function hardBreak(eat, value, silent) {
   }
 }
 
-},{"../locate/break":40}],55:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:code-fenced
- * @fileoverview Tokenise fenced code.
- */
-
+},{"../locate/break":32}],47:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var trim = require('trim-trailing-lines');
 
-/* Expose. */
 module.exports = fencedCode;
 
-/* Characters */
 var C_NEWLINE = '\n';
 var C_TAB = '\t';
 var C_SPACE = ' ';
 var C_TILDE = '~';
 var C_TICK = '`';
 
-/* Constants */
 var MIN_FENCE_COUNT = 3;
 var CODE_INDENT_COUNT = 4;
 
-/**
- * Tokenise fenced code.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `code` node.
- */
 function fencedCode(eat, value, silent) {
   var self = this;
   var settings = self.options;
@@ -6324,7 +5257,8 @@ function fencedCode(eat, value, silent) {
   }
 
   /* Eat flag. */
-  flag = queue = '';
+  flag = '';
+  queue = '';
 
   while (index < length) {
     character = value.charAt(index);
@@ -6368,14 +5302,19 @@ function fencedCode(eat, value, silent) {
     subvalue += queue;
   }
 
-  queue = closing = exdentedClosing = content = exdentedContent = '';
+  queue = '';
+  closing = '';
+  exdentedClosing = '';
+  content = '';
+  exdentedContent = '';
 
   /* Eat content. */
   while (index < length) {
     character = value.charAt(index);
     content += closing;
     exdentedContent += exdentedClosing;
-    closing = exdentedClosing = '';
+    closing = '';
+    exdentedClosing = '';
 
     if (character !== C_NEWLINE) {
       content += character;
@@ -6463,42 +5402,22 @@ function fencedCode(eat, value, silent) {
   });
 }
 
-},{"trim-trailing-lines":141}],56:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:code-indented
- * @fileoverview Tokenise indented code.
- */
-
+},{"trim-trailing-lines":127}],48:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var repeat = require('repeat-string');
 var trim = require('trim-trailing-lines');
 
-/* Expose. */
 module.exports = indentedCode;
 
-/* Characters */
 var C_NEWLINE = '\n';
 var C_TAB = '\t';
 var C_SPACE = ' ';
 
-/* Constants */
 var CODE_INDENT_COUNT = 4;
 var CODE_INDENT = repeat(C_SPACE, CODE_INDENT_COUNT);
 
-/**
- * Tokenise indented code.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `code` node.
- */
+/* Tokenise indented code. */
 function indentedCode(eat, value, silent) {
   var index = -1;
   var length = value.length;
@@ -6518,10 +5437,12 @@ function indentedCode(eat, value, silent) {
 
       subvalue += subvalueQueue;
       content += contentQueue;
-      subvalueQueue = contentQueue = '';
+      subvalueQueue = '';
+      contentQueue = '';
 
       if (character === C_NEWLINE) {
-        subvalueQueue = contentQueue = character;
+        subvalueQueue = character;
+        contentQueue = character;
       } else {
         subvalue += character;
         content += character;
@@ -6530,7 +5451,8 @@ function indentedCode(eat, value, silent) {
           character = value.charAt(index);
 
           if (!character || character === C_NEWLINE) {
-            contentQueue = subvalueQueue = character;
+            contentQueue = character;
+            subvalueQueue = character;
             break;
           }
 
@@ -6580,37 +5502,18 @@ function indentedCode(eat, value, silent) {
   }
 }
 
-},{"repeat-string":135,"trim-trailing-lines":141}],57:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:code-inline
- * @fileoverview Tokenise inline code.
- */
-
+},{"repeat-string":121,"trim-trailing-lines":127}],49:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var whitespace = require('is-whitespace-character');
 var locate = require('../locate/code-inline');
 
-/* Expose. */
 module.exports = inlineCode;
 inlineCode.locator = locate;
 
-/* Constants. */
 var C_TICK = '`';
 
-/**
- * Tokenise inline code.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `inlineCode` node.
- */
+/* Tokenise inline code. */
 function inlineCode(eat, value, silent) {
   var length = value.length;
   var index = 0;
@@ -6683,7 +5586,8 @@ function inlineCode(eat, value, silent) {
     return true;
   }
 
-  contentQueue = subqueue = '';
+  contentQueue = '';
+  subqueue = '';
   length = queue.length;
   index = -1;
 
@@ -6712,27 +5616,16 @@ function inlineCode(eat, value, silent) {
   });
 }
 
-},{"../locate/code-inline":41,"is-whitespace-character":26}],58:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:definition
- * @fileoverview Tokenise a definition.
- */
-
+},{"../locate/code-inline":33,"is-whitespace-character":19}],50:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var whitespace = require('is-whitespace-character');
 var normalize = require('../util/normalize');
 
-/* Expose. */
 module.exports = definition;
 definition.notInList = true;
 definition.notInBlock = true;
 
-/* Characters */
 var C_DOUBLE_QUOTE = '"';
 var C_SINGLE_QUOTE = '\'';
 var C_BACKSLASH = '\\';
@@ -6747,14 +5640,6 @@ var C_COLON = ':';
 var C_LT = '<';
 var C_GT = '>';
 
-/**
- * Tokenise a definition.
- *
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `definition` node.
- */
 function definition(eat, value, silent) {
   var self = this;
   var commonmark = self.options.commonmark;
@@ -6995,15 +5880,7 @@ function definition(eat, value, silent) {
   }
 }
 
-/**
- * Check whether `character` can be inside an enclosed
- * URI.
- *
- * @property {string} delimiter - Closing delimiter.
- * @param {string} character - Character to test.
- * @return {boolean} - Whether `character` can be inside
- *   an enclosed URI.
- */
+/* Check if `character` can be inside an enclosed URI. */
 function isEnclosedURLCharacter(character) {
   return character !== C_GT &&
     character !== C_BRACKET_OPEN &&
@@ -7012,52 +5889,25 @@ function isEnclosedURLCharacter(character) {
 
 isEnclosedURLCharacter.delimiter = C_GT;
 
-/**
- * Check whether `character` can be inside an unclosed
- * URI.
- *
- * @param {string} character - Character to test.
- * @return {boolean} - Whether `character` can be inside
- *   an unclosed URI.
- */
+/* Check if `character` can be inside an unclosed URI. */
 function isUnclosedURLCharacter(character) {
   return character !== C_BRACKET_OPEN &&
     character !== C_BRACKET_CLOSE &&
     !whitespace(character);
 }
 
-},{"../util/normalize":87,"is-whitespace-character":26}],59:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:delete
- * @fileoverview Tokenise strikethrough.
- */
-
+},{"../util/normalize":74,"is-whitespace-character":19}],51:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var whitespace = require('is-whitespace-character');
 var locate = require('../locate/delete');
 
-/* Expose. */
 module.exports = strikethrough;
 strikethrough.locator = locate;
 
-/* Constants. */
 var C_TILDE = '~';
 var DOUBLE = '~~';
 
-/**
- * Tokenise strikethrough.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `delete` node.
- */
 function strikethrough(eat, value, silent) {
   var self = this;
   var character = '';
@@ -7108,40 +5958,20 @@ function strikethrough(eat, value, silent) {
   }
 }
 
-},{"../locate/delete":42,"is-whitespace-character":26}],60:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:emphasis
- * @fileoverview Tokenise emphasis.
- */
-
+},{"../locate/delete":34,"is-whitespace-character":19}],52:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var trim = require('trim');
 var word = require('is-word-character');
 var whitespace = require('is-whitespace-character');
 var locate = require('../locate/emphasis');
 
-/* Expose. */
 module.exports = emphasis;
 emphasis.locator = locate;
 
-/* Constants. */
 var C_ASTERISK = '*';
 var C_UNDERSCORE = '_';
 
-/**
- * Tokenise emphasis.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `emphasis` node.
- */
 function emphasis(eat, value, silent) {
   var self = this;
   var index = 0;
@@ -7159,10 +5989,12 @@ function emphasis(eat, value, silent) {
   }
 
   pedantic = self.options.pedantic;
-  subvalue = marker = character;
+  subvalue = character;
+  marker = character;
   length = value.length;
   index++;
-  queue = character = '';
+  queue = '';
+  character = '';
 
   if (pedantic && whitespace(value.charAt(index))) {
     return;
@@ -7213,33 +6045,14 @@ function emphasis(eat, value, silent) {
   }
 }
 
-},{"../locate/emphasis":43,"is-whitespace-character":26,"is-word-character":27,"trim":142}],61:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:escape
- * @fileoverview Tokenise an escape.
- */
-
+},{"../locate/emphasis":35,"is-whitespace-character":19,"is-word-character":20,"trim":128}],53:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var locate = require('../locate/escape');
 
-/* Expose. */
 module.exports = escape;
 escape.locator = locate;
 
-/**
- * Tokenise an escape.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `text` or `break` node.
- */
 function escape(eat, value, silent) {
   var self = this;
   var character;
@@ -7268,27 +6081,16 @@ function escape(eat, value, silent) {
   }
 }
 
-},{"../locate/escape":44}],62:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:footnote-definition
- * @fileoverview Tokenise footnote definition.
- */
-
+},{"../locate/escape":36}],54:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var whitespace = require('is-whitespace-character');
 var normalize = require('../util/normalize');
 
-/* Expose. */
 module.exports = footnoteDefinition;
 footnoteDefinition.notInList = true;
 footnoteDefinition.notInBlock = true;
 
-/* Characters */
 var C_BACKSLASH = '\\';
 var C_NEWLINE = '\n';
 var C_TAB = '\t';
@@ -7298,17 +6100,8 @@ var C_BRACKET_CLOSE = ']';
 var C_CARET = '^';
 var C_COLON = ':';
 
-/* Constants. */
 var EXPRESSION_INITIAL_TAB = /^( {4}|\t)?/gm;
 
-/**
- * Tokenise a footnote definition.
- *
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `footnoteDefinition` node.
- */
 function footnoteDefinition(eat, value, silent) {
   var self = this;
   var offsets = self.offset;
@@ -7401,7 +6194,9 @@ function footnoteDefinition(eat, value, silent) {
 
   now.column += subvalue.length;
   now.offset += subvalue.length;
-  queue = content = subqueue = '';
+  queue = '';
+  content = '';
+  subqueue = '';
 
   while (index < length) {
     character = value.charAt(index);
@@ -7473,38 +6268,18 @@ function footnoteDefinition(eat, value, silent) {
   });
 }
 
-},{"../util/normalize":87,"is-whitespace-character":26}],63:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:heading-atx
- * @fileoverview Tokenise an ATX-style heading.
- */
-
+},{"../util/normalize":74,"is-whitespace-character":19}],55:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = atxHeading;
 
-/* Characters */
 var C_NEWLINE = '\n';
 var C_TAB = '\t';
 var C_SPACE = ' ';
 var C_HASH = '#';
 
-/* Constants. */
 var MAX_ATX_COUNT = 6;
 
-/**
- * Tokenise an ATX-style heading.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `heading` node.
- */
 function atxHeading(eat, value, silent) {
   var self = this;
   var settings = self.options;
@@ -7587,7 +6362,8 @@ function atxHeading(eat, value, silent) {
 
   /* Eat content. */
   subvalue += queue;
-  queue = content = '';
+  queue = '';
+  content = '';
 
   while (++index < length) {
     character = value.charAt(index);
@@ -7635,46 +6411,26 @@ function atxHeading(eat, value, silent) {
   });
 }
 
-},{}],64:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:heading-setext
- * @fileoverview Tokenise an setext-style heading.
- */
-
+},{}],56:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = setextHeading;
 
-/* Characters */
 var C_NEWLINE = '\n';
 var C_TAB = '\t';
 var C_SPACE = ' ';
 var C_EQUALS = '=';
 var C_DASH = '-';
 
-/* Constants. */
 var MAX_HEADING_INDENT = 3;
 
-/* A map of characters which can be used to mark setext
+/* Map of characters which can be used to mark setext
  * headers, mapping to their corresponding depth. */
 var SETEXT_MARKERS = {};
 
 SETEXT_MARKERS[C_EQUALS] = 1;
 SETEXT_MARKERS[C_DASH] = 2;
 
-/**
- * Tokenise an setext-style heading.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `heading` node.
- */
 function setextHeading(eat, value, silent) {
   var self = this;
   var now = eat.now();
@@ -7700,7 +6456,8 @@ function setextHeading(eat, value, silent) {
   }
 
   /* Eat content. */
-  content = queue = '';
+  content = '';
+  queue = '';
 
   while (++index < length) {
     character = value.charAt(index);
@@ -7763,53 +6520,40 @@ function setextHeading(eat, value, silent) {
   });
 }
 
-},{}],65:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:html-block
- * @fileoverview Tokenise block HTML.
- */
-
+},{}],57:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
-var cdata = require('../util/match-cdata');
-var comment = require('../util/match-comment');
-var declaration = require('../util/match-declaration');
-var instruction = require('../util/match-instruction');
-var closing = require('../util/match-tag-closing');
-var opening = require('../util/match-tag-opening');
+var openCloseTag = require('../util/html').openCloseTag;
 
-/* Expose. */
 module.exports = blockHTML;
 
-/* Characters. */
 var C_TAB = '\t';
 var C_SPACE = ' ';
 var C_NEWLINE = '\n';
+var C_LT = '<';
 
-/* Constants. */
-var MIN_CLOSING_HTML_NEWLINE_COUNT = 2;
-
-/**
- * Tokenise block HTML.
- *
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `html` node.
- */
 function blockHTML(eat, value, silent) {
   var self = this;
   var blocks = self.options.blocks;
-  var index = 0;
   var length = value.length;
-  var subvalue = '';
+  var index = 0;
+  var next;
+  var line;
   var offset;
   var character;
-  var queue;
+  var count;
+  var sequence;
+  var subvalue;
+
+  var sequences = [
+    [/^<(script|pre|style)(?=(\s|>|$))/i, /<\/(script|pre|style)>/i, true],
+    [/^<!--/, /-->/, true],
+    [/^<\?/, /\?>/, true],
+    [/^<![A-Za-z]/, />/, true],
+    [/^<!\[CDATA\[/, /\]\]>/, true],
+    [new RegExp('^</?(' + blocks.join('|') + ')(?=(\\s|/?>|$))', 'i'), /^$/, true],
+    [new RegExp(openCloseTag.source + '\\s*$'), /^$/, false]
+  ];
 
   /* Eat initial spacing. */
   while (index < length) {
@@ -7819,108 +6563,105 @@ function blockHTML(eat, value, silent) {
       break;
     }
 
-    subvalue += character;
     index++;
   }
 
-  offset = index;
-  value = value.slice(offset);
+  if (value.charAt(index) !== C_LT) {
+    return;
+  }
 
-  /* Try to eat an HTML thing. */
-  queue = comment(value, self.options) ||
-    cdata(value) ||
-    instruction(value) ||
-    declaration(value) ||
-    closing(value, blocks) ||
-    opening(value, blocks);
+  next = value.indexOf(C_NEWLINE, index + 1);
+  next = next === -1 ? length : next;
+  line = value.slice(index, next);
+  offset = -1;
+  count = sequences.length;
 
-  if (!queue) {
+  while (++offset < count) {
+    if (sequences[offset][0].test(line)) {
+      sequence = sequences[offset];
+      break;
+    }
+  }
+
+  if (!sequence) {
     return;
   }
 
   if (silent) {
-    return true;
+    return sequence[2];
   }
 
-  subvalue += queue;
-  index = subvalue.length - offset;
-  queue = '';
+  index = next;
 
-  while (index < length) {
-    character = value.charAt(index);
+  if (!sequence[1].test(line)) {
+    while (index < length) {
+      next = value.indexOf(C_NEWLINE, index + 1);
+      next = next === -1 ? length : next;
+      line = value.slice(index + 1, next);
 
-    if (character === C_NEWLINE) {
-      queue += character;
-    } else if (queue.length < MIN_CLOSING_HTML_NEWLINE_COUNT) {
-      subvalue += queue + character;
-      queue = '';
-    } else {
-      break;
+      if (sequence[1].test(line)) {
+        if (line) {
+          index = next;
+        }
+
+        break;
+      }
+
+      index = next;
     }
-
-    index++;
   }
 
-  return eat(subvalue)({
-    type: 'html',
-    value: subvalue
-  });
+  subvalue = value.slice(0, index);
+
+  return eat(subvalue)({type: 'html', value: subvalue});
 }
 
-},{"../util/match-cdata":81,"../util/match-comment":82,"../util/match-declaration":83,"../util/match-instruction":84,"../util/match-tag-closing":85,"../util/match-tag-opening":86}],66:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:html-inline
- * @fileoverview Tokenise inline HTML.
- */
-
+},{"../util/html":72}],58:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
+var alphabetical = require('is-alphabetical');
 var locate = require('../locate/tag');
-var cdata = require('../util/match-cdata');
-var comment = require('../util/match-comment');
-var declaration = require('../util/match-declaration');
-var instruction = require('../util/match-instruction');
-var closing = require('../util/match-tag-closing');
-var opening = require('../util/match-tag-opening');
+var tag = require('../util/html').tag;
 
-/* Expose. */
 module.exports = inlineHTML;
 inlineHTML.locator = locate;
 
-/* Constants. */
 var EXPRESSION_HTML_LINK_OPEN = /^<a /i;
 var EXPRESSION_HTML_LINK_CLOSE = /^<\/a>/i;
 
-/**
- * Tokenise inline HTML.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `html` node.
- */
 function inlineHTML(eat, value, silent) {
   var self = this;
-  var subvalue = comment(value, self.options) ||
-    cdata(value) ||
-    instruction(value) ||
-    declaration(value) ||
-    closing(value) ||
-    opening(value);
+  var length = value.length;
+  var character;
+  var subvalue;
+
+  if (value.charAt(0) !== '<' || length < 3) {
+    return;
+  }
+
+  character = value.charAt(1);
+
+  if (
+    !alphabetical(character) &&
+    character !== '?' &&
+    character !== '!' &&
+    character !== '/'
+  ) {
+    return;
+  }
+
+  subvalue = value.match(tag);
 
   if (!subvalue) {
     return;
   }
 
-  /* istanbul ignore if - never used (yet) */
+  /* istanbul ignore if - not used yet. */
   if (silent) {
     return true;
   }
+
+  subvalue = subvalue[0];
 
   if (!self.inLink && EXPRESSION_HTML_LINK_OPEN.test(subvalue)) {
     self.inLink = true;
@@ -7928,33 +6669,20 @@ function inlineHTML(eat, value, silent) {
     self.inLink = false;
   }
 
-  return eat(subvalue)({
-    type: 'html',
-    value: subvalue
-  });
+  return eat(subvalue)({type: 'html', value: subvalue});
 }
 
-},{"../locate/tag":47,"../util/match-cdata":81,"../util/match-comment":82,"../util/match-declaration":83,"../util/match-instruction":84,"../util/match-tag-closing":85,"../util/match-tag-opening":86}],67:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:link
- * @fileoverview Tokenise a link.
- */
-
+},{"../locate/tag":39,"../util/html":72,"is-alphabetical":12}],59:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
-var has = require('has');
 var whitespace = require('is-whitespace-character');
 var locate = require('../locate/link');
 
-/* Expose. */
 module.exports = link;
 link.locator = locate;
 
-/* Constants. */
+var own = {}.hasOwnProperty;
+
 var C_BACKSLASH = '\\';
 var C_BRACKET_OPEN = '[';
 var C_BRACKET_CLOSE = ']';
@@ -7966,14 +6694,14 @@ var C_TICK = '`';
 var C_DOUBLE_QUOTE = '"';
 var C_SINGLE_QUOTE = '\'';
 
-/* A map of characters, which can be used to mark link
+/* Map of characters, which can be used to mark link
  * and image titles. */
 var LINK_MARKERS = {};
 
 LINK_MARKERS[C_DOUBLE_QUOTE] = C_DOUBLE_QUOTE;
 LINK_MARKERS[C_SINGLE_QUOTE] = C_SINGLE_QUOTE;
 
-/* A map of characters, which can be used to mark link
+/* Map of characters, which can be used to mark link
  * and image titles in commonmark-mode. */
 var COMMONMARK_LINK_MARKERS = {};
 
@@ -7981,20 +6709,12 @@ COMMONMARK_LINK_MARKERS[C_DOUBLE_QUOTE] = C_DOUBLE_QUOTE;
 COMMONMARK_LINK_MARKERS[C_SINGLE_QUOTE] = C_SINGLE_QUOTE;
 COMMONMARK_LINK_MARKERS[C_PAREN_OPEN] = C_PAREN_CLOSE;
 
-/**
- * Tokenise a link.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `link` node.
- */
 function link(eat, value, silent) {
   var self = this;
   var subvalue = '';
   var index = 0;
   var character = value.charAt(0);
+  var pedantic = self.options.pedantic;
   var commonmark = self.options.commonmark;
   var gfm = self.options.gfm;
   var closed;
@@ -8048,7 +6768,8 @@ function link(eat, value, silent) {
   now.offset += index;
 
   while (index < length) {
-    subqueue = character = value.charAt(index);
+    character = value.charAt(index);
+    subqueue = character;
 
     if (character === C_TICK) {
       /* Inline-code in link content. */
@@ -8081,7 +6802,7 @@ function link(eat, value, silent) {
       } else {
         /* Allow white-space between content and
          * url in GFM mode. */
-        if (gfm) {
+        if (!pedantic) {
           while (index < length) {
             character = value.charAt(index + 1);
 
@@ -8171,12 +6892,12 @@ function link(eat, value, silent) {
     while (index < length) {
       character = value.charAt(index);
 
-      if (subqueue && has(markers, character)) {
+      if (subqueue && own.call(markers, character)) {
         break;
       }
 
       if (whitespace(character)) {
-        if (commonmark) {
+        if (!pedantic) {
           break;
         }
 
@@ -8229,7 +6950,7 @@ function link(eat, value, silent) {
   subvalue += queue;
 
   /* Eat the title. */
-  if (queue && has(markers, character)) {
+  if (queue && own.call(markers, character)) {
     index++;
     subvalue += character;
     queue = '';
@@ -8345,30 +7066,20 @@ function link(eat, value, silent) {
   return eat(subvalue)(node);
 }
 
-},{"../locate/link":45,"has":18,"is-whitespace-character":26}],68:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:list
- * @fileoverview Tokenise a list.
- */
-
+},{"../locate/link":37,"is-whitespace-character":19}],60:[function(require,module,exports){
 'use strict';
 
 /* eslint-disable max-params */
 
-/* Dependencies. */
 var trim = require('trim');
 var repeat = require('repeat-string');
 var decimal = require('is-decimal');
 var getIndent = require('../util/get-indentation');
 var removeIndent = require('../util/remove-indentation');
+var interrupt = require('../util/interrupt');
 
-/* Expose. */
 module.exports = list;
 
-/* Characters. */
 var C_ASTERISK = '*';
 var C_UNDERSCORE = '_';
 var C_PLUS = '+';
@@ -8380,15 +7091,14 @@ var C_TAB = '\t';
 var C_PAREN_CLOSE = ')';
 var C_X_LOWER = 'x';
 
-/* Constants. */
 var TAB_SIZE = 4;
 var EXPRESSION_LOOSE_LIST_ITEM = /\n\n(?!\s*$)/;
-var EXPRESSION_TASK_ITEM = /^\[([ \t]|x|X)\][ \t]/;
+var EXPRESSION_TASK_ITEM = /^\[([ \t]|x|X)][ \t]/;
 var EXPRESSION_BULLET = /^([ \t]*)([*+-]|\d+[.)])( {1,4}(?! )| |\t|$|(?=\n))([^\n]*)/;
 var EXPRESSION_PEDANTIC_BULLET = /^([ \t]*)([*+-]|\d+[.)])([ \t]+)/;
 var EXPRESSION_INITIAL_INDENT = /^( {1,4}|\t)?/gm;
 
-/* A map of characters which can be used to mark
+/* Map of characters which can be used to mark
  * list-items. */
 var LIST_UNORDERED_MARKERS = {};
 
@@ -8396,33 +7106,25 @@ LIST_UNORDERED_MARKERS[C_ASTERISK] = true;
 LIST_UNORDERED_MARKERS[C_PLUS] = true;
 LIST_UNORDERED_MARKERS[C_DASH] = true;
 
-/* A map of characters which can be used to mark
+/* Map of characters which can be used to mark
  * list-items after a digit. */
 var LIST_ORDERED_MARKERS = {};
 
 LIST_ORDERED_MARKERS[C_DOT] = true;
 
-/* A map of characters which can be used to mark
+/* Map of characters which can be used to mark
  * list-items after a digit. */
 var LIST_ORDERED_COMMONMARK_MARKERS = {};
 
 LIST_ORDERED_COMMONMARK_MARKERS[C_DOT] = true;
 LIST_ORDERED_COMMONMARK_MARKERS[C_PAREN_CLOSE] = true;
 
-/**
- * Tokenise a list.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `list` node.
- */
 function list(eat, value, silent) {
   var self = this;
   var commonmark = self.options.commonmark;
   var pedantic = self.options.pedantic;
   var tokenizers = self.blockTokenizers;
+  var interuptors = self.interruptList;
   var markers;
   var index = 0;
   var length = value.length;
@@ -8614,7 +7316,7 @@ function list(eat, value, silent) {
     }
 
     if (currentMarker) {
-      if (commonmark && marker !== currentMarker) {
+      if (!pedantic && marker !== currentMarker) {
         break;
       }
 
@@ -8676,23 +7378,8 @@ function list(eat, value, silent) {
         break;
       }
 
-      if (
-          !pedantic &&
-          (
-            tokenizers.fencedCode.call(self, eat, line, true) ||
-            tokenizers.thematicBreak.call(self, eat, line, true)
-          )
-      ) {
+      if (interrupt(interuptors, tokenizers, self, [eat, line, true])) {
         break;
-      }
-
-      if (!commonmark) {
-        if (
-          tokenizers.definition.call(self, eat, line, true) ||
-          tokenizers.footnote.call(self, eat, line, true)
-        ) {
-          break;
-        }
       }
 
       item.value = item.value.concat(emptyLines, line);
@@ -8744,17 +7431,6 @@ function list(eat, value, silent) {
   return node;
 }
 
-/**
- * Create a list-item node.
- *
- * @example
- *   listItem('- _foo_', now());
- *
- * @param {Object} ctx - Parser.
- * @param {Object} value - List-item.
- * @param {Object} position - List-item location.
- * @return {Object} - `listItem` node.
- */
 function listItem(ctx, value, position) {
   var offsets = ctx.offset;
   var fn = ctx.options.pedantic ? pedanticListItem : normalListItem;
@@ -8784,34 +7460,10 @@ function listItem(ctx, value, position) {
   };
 }
 
-/**
- * Create a list-item using overly simple mechanics.
- *
- * @example
- *   renderPedanticListItem('- _foo_', now());
- *
- * @param {Object} ctx - Parser.
- * @param {string} value - List-item.
- * @param {Object} position - List-item location.
- * @return {string} - Cleaned `value`.
- */
+/* Create a list-item using overly simple mechanics. */
 function pedanticListItem(ctx, value, position) {
   var offsets = ctx.offset;
   var line = position.line;
-
-  /**
-   * A simple replacer which removed all matches,
-   * and adds their length to `offset`.
-   *
-   * @param {string} $0 - Indentation to subtract.
-   * @return {string} - An empty string.
-   */
-  function replacer($0) {
-    offsets[line] = (offsets[line] || 0) + $0.length;
-    line++;
-
-    return '';
-  }
 
   /* Remove the list-item’s bullet. */
   value = value.replace(EXPRESSION_PEDANTIC_BULLET, replacer);
@@ -8821,19 +7473,18 @@ function pedanticListItem(ctx, value, position) {
   line = position.line;
 
   return value.replace(EXPRESSION_INITIAL_INDENT, replacer);
+
+  /* A simple replacer which removed all matches,
+   * and adds their length to `offset`. */
+  function replacer($0) {
+    offsets[line] = (offsets[line] || 0) + $0.length;
+    line++;
+
+    return '';
+  }
 }
 
-/**
- * Create a list-item using sane mechanics.
- *
- * @example
- *   renderNormalListItem('- _foo_', now());
- *
- * @param {Object} ctx - Parser.
- * @param {string} value - List-item.
- * @param {Object} position - List-item location.
- * @return {string} - Cleaned `value`.
- */
+/* Create a list-item using sane mechanics. */
 function normalListItem(ctx, value, position) {
   var offsets = ctx.offset;
   var line = position.line;
@@ -8846,21 +7497,7 @@ function normalListItem(ctx, value, position) {
   var length;
 
   /* Remove the list-item’s bullet. */
-  value = value.replace(EXPRESSION_BULLET, function ($0, $1, $2, $3, $4) {
-    bullet = $1 + $2 + $3;
-    rest = $4;
-
-    /* Make sure that the first nine numbered list items
-     * can indent with an extra space.  That is, when
-     * the bullet did not receive an extra final space. */
-    if (Number($2) < 10 && bullet.length % 2 === 1) {
-      $2 = C_SPACE + $2;
-    }
-
-    max = $1 + repeat(C_SPACE, $2.length) + $3;
-
-    return max + rest;
-  });
+  value = value.replace(EXPRESSION_BULLET, replacer);
 
   lines = value.split(C_NEWLINE);
 
@@ -8887,34 +7524,32 @@ function normalListItem(ctx, value, position) {
   }
 
   return trimmedLines.join(C_NEWLINE);
+
+  function replacer($0, $1, $2, $3, $4) {
+    bullet = $1 + $2 + $3;
+    rest = $4;
+
+    /* Make sure that the first nine numbered list items
+     * can indent with an extra space.  That is, when
+     * the bullet did not receive an extra final space. */
+    if (Number($2) < 10 && bullet.length % 2 === 1) {
+      $2 = C_SPACE + $2;
+    }
+
+    max = $1 + repeat(C_SPACE, $2.length) + $3;
+
+    return max + rest;
+  }
 }
 
-},{"../util/get-indentation":80,"../util/remove-indentation":88,"is-decimal":24,"repeat-string":135,"trim":142}],69:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:newline
- * @fileoverview Tokenise a newline.
- */
-
+},{"../util/get-indentation":71,"../util/interrupt":73,"../util/remove-indentation":75,"is-decimal":16,"repeat-string":121,"trim":128}],61:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var whitespace = require('is-whitespace-character');
 
-/* Expose. */
 module.exports = newline;
 
-/**
- * Tokenise newline.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {boolean?} - boolean in silent mode, nothing otherwise.
- */
+/* Tokenise newline. */
 function newline(eat, value, silent) {
   var character = value.charAt(0);
   var length;
@@ -8956,48 +7591,30 @@ function newline(eat, value, silent) {
   eat(subvalue);
 }
 
-},{"is-whitespace-character":26}],70:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:paragraph
- * @fileoverview Tokenise a paragraph.
- */
-
+},{"is-whitespace-character":19}],62:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var trim = require('trim');
 var decimal = require('is-decimal');
 var trimTrailingLines = require('trim-trailing-lines');
+var interrupt = require('../util/interrupt');
 
-/* Expose. */
 module.exports = paragraph;
 
-/* Characters. */
 var C_NEWLINE = '\n';
 var C_TAB = '\t';
 var C_SPACE = ' ';
 
-/* Constants. */
 var TAB_SIZE = 4;
 
-/**
- * Tokenise paragraph.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {boolean?} - boolean in silent mode, nothing otherwise.
- */
+/* Tokenise paragraph. */
 function paragraph(eat, value, silent) {
   var self = this;
   var settings = self.options;
   var commonmark = settings.commonmark;
   var gfm = settings.gfm;
   var tokenizers = self.blockTokenizers;
+  var interruptors = self.interruptParagraph;
   var index = value.indexOf(C_NEWLINE);
   var length = value.length;
   var position;
@@ -9045,17 +7662,11 @@ function paragraph(eat, value, silent) {
       }
     }
 
-    /* Check if the following code contains a possible
-     * block. */
     subvalue = value.slice(index + 1);
 
-    if (
-      tokenizers.thematicBreak.call(self, eat, subvalue, true) ||
-      tokenizers.atxHeading.call(self, eat, subvalue, true) ||
-      tokenizers.fencedCode.call(self, eat, subvalue, true) ||
-      tokenizers.blockquote.call(self, eat, subvalue, true) ||
-      tokenizers.html.call(self, eat, subvalue, true)
-    ) {
+    /* Check if the following code contains a possible
+     * block. */
+    if (interrupt(interruptors, tokenizers, self, [eat, subvalue, true])) {
       break;
     }
 
@@ -9068,17 +7679,6 @@ function paragraph(eat, value, silent) {
         self.inList ||
         commonmark ||
         (gfm && !decimal(trim.left(subvalue).charAt(0)))
-      )
-    ) {
-      break;
-    }
-
-    if (
-      !commonmark &&
-      (
-        tokenizers.setextHeading.call(self, eat, subvalue, true) ||
-        tokenizers.definition.call(self, eat, subvalue, true) ||
-        tokenizers.footnote.call(self, eat, subvalue, true)
       )
     ) {
       break;
@@ -9115,27 +7715,16 @@ function paragraph(eat, value, silent) {
   });
 }
 
-},{"is-decimal":24,"trim":142,"trim-trailing-lines":141}],71:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:reference
- * @fileoverview Tokenise a reference.
- */
-
+},{"../util/interrupt":73,"is-decimal":16,"trim":128,"trim-trailing-lines":127}],63:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var whitespace = require('is-whitespace-character');
 var locate = require('../locate/link');
 var normalize = require('../util/normalize');
 
-/* Expose. */
 module.exports = reference;
 reference.locator = locate;
 
-/* Constants. */
 var T_LINK = 'link';
 var T_IMAGE = 'image';
 var T_FOOTNOTE = 'footnote';
@@ -9147,16 +7736,6 @@ var C_BACKSLASH = '\\';
 var C_BRACKET_OPEN = '[';
 var C_BRACKET_CLOSE = ']';
 
-/**
- * Tokenise a reference.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `footnoteReference`,
- *   `linkReference`, or `imageReference` node.
- */
 function reference(eat, value, silent) {
   var self = this;
   var character = value.charAt(0);
@@ -9227,7 +7806,8 @@ function reference(eat, value, silent) {
     index++;
   }
 
-  subvalue = content = queue;
+  subvalue = queue;
+  content = queue;
   character = value.charAt(index);
 
   if (character !== C_BRACKET_CLOSE) {
@@ -9251,7 +7831,8 @@ function reference(eat, value, silent) {
 
   character = value.charAt(index);
 
-  if (character === C_BRACKET_OPEN) {
+  /* Inline footnotes cannot have an identifier. */
+  if (type !== T_FOOTNOTE && character === C_BRACKET_OPEN) {
     identifier = '';
     queue += character;
     index++;
@@ -9297,13 +7878,6 @@ function reference(eat, value, silent) {
     return;
   }
 
-  /* Inline footnotes cannot have an identifier. */
-  if (type === T_FOOTNOTE && referenceType !== REFERENCE_TYPE_SHORTCUT) {
-    type = T_LINK;
-    intro = C_BRACKET_OPEN + C_CARET;
-    content = C_CARET + content;
-  }
-
   subvalue = intro + subvalue;
 
   if (type === T_LINK && self.inLink) {
@@ -9347,39 +7921,19 @@ function reference(eat, value, silent) {
   return eat(subvalue)(node);
 }
 
-},{"../locate/link":45,"../util/normalize":87,"is-whitespace-character":26}],72:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:strong
- * @fileoverview Tokenise strong.
- */
-
+},{"../locate/link":37,"../util/normalize":74,"is-whitespace-character":19}],64:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var trim = require('trim');
 var whitespace = require('is-whitespace-character');
 var locate = require('../locate/strong');
 
-/* Expose. */
 module.exports = strong;
 strong.locator = locate;
 
-/* Constants. */
 var C_ASTERISK = '*';
 var C_UNDERSCORE = '_';
 
-/**
- * Tokenise strong.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `strong` node.
- */
 function strong(eat, value, silent) {
   var self = this;
   var index = 0;
@@ -9404,7 +7958,8 @@ function strong(eat, value, silent) {
   subvalue = marker + marker;
   length = value.length;
   index++;
-  queue = character = '';
+  queue = '';
+  character = '';
 
   if (pedantic && whitespace(value.charAt(index))) {
     return;
@@ -9452,25 +8007,13 @@ function strong(eat, value, silent) {
   }
 }
 
-},{"../locate/strong":46,"is-whitespace-character":26,"trim":142}],73:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:table
- * @fileoverview Tokenise a table.
- */
-
+},{"../locate/strong":38,"is-whitespace-character":19,"trim":128}],65:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var whitespace = require('is-whitespace-character');
 
-/* Expose. */
 module.exports = table;
-table.notInList = true;
 
-/* Characters. */
 var C_BACKSLASH = '\\';
 var C_TICK = '`';
 var C_DASH = '-';
@@ -9480,25 +8023,14 @@ var C_SPACE = ' ';
 var C_NEWLINE = '\n';
 var C_TAB = '\t';
 
-/* Constants. */
-var MIN_TABLE_COLUMNS = 2;
+var MIN_TABLE_COLUMNS = 1;
 var MIN_TABLE_ROWS = 2;
 
-/* Available table alignments. */
 var TABLE_ALIGN_LEFT = 'left';
 var TABLE_ALIGN_CENTER = 'center';
 var TABLE_ALIGN_RIGHT = 'right';
 var TABLE_ALIGN_NONE = null;
 
-/**
- * Tokenise a table.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `table` node.
- */
 function table(eat, value, silent) {
   var self = this;
   var index;
@@ -9536,7 +8068,8 @@ function table(eat, value, silent) {
    * checks for performance here, such as the minimum
    * number of rows, and allowed characters in the
    * alignment row. */
-  index = lineCount = 0;
+  index = 0;
+  lineCount = 0;
   length = value.length + 1;
   lines = [];
 
@@ -9643,9 +8176,11 @@ function table(eat, value, silent) {
 
     length = line.length + 1;
     index = 0;
-    queue = cell = '';
+    queue = '';
+    cell = '';
     preamble = true;
-    count = opening = null;
+    count = null;
+    opening = null;
 
     while (index < length) {
       character = line.charAt(index);
@@ -9694,7 +8229,8 @@ function table(eat, value, silent) {
 
           eat(queue + character);
 
-          queue = cell = '';
+          queue = '';
+          cell = '';
         }
       } else {
         if (queue) {
@@ -9739,29 +8275,11 @@ function table(eat, value, silent) {
   return table;
 }
 
-},{"is-whitespace-character":26}],74:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:text
- * @fileoverview Tokenise text.
- */
-
+},{"is-whitespace-character":19}],66:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = text;
 
-/**
- * Tokenise text.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `text` node.
- */
 function text(eat, value, silent) {
   var self = this;
   var methods;
@@ -9817,21 +8335,11 @@ function text(eat, value, silent) {
   });
 }
 
-},{}],75:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:thematic-break
- * @fileoverview Tokenise a thematic break.
- */
-
+},{}],67:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = thematicBreak;
 
-/* Characters */
 var C_NEWLINE = '\n';
 var C_TAB = '\t';
 var C_SPACE = ' ';
@@ -9839,17 +8347,8 @@ var C_ASTERISK = '*';
 var C_UNDERSCORE = '_';
 var C_DASH = '-';
 
-/* Constants. */
 var THEMATIC_BREAK_MARKER_COUNT = 3;
 
-/**
- * Tokenise a thematic break.
- *
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `thematicBreak` node.
- */
 function thematicBreak(eat, value, silent) {
   var index = -1;
   var length = value.length + 1;
@@ -9908,28 +8407,17 @@ function thematicBreak(eat, value, silent) {
   }
 }
 
-},{}],76:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:url
- * @fileoverview Tokenise a URL.
- */
-
+},{}],68:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var decode = require('parse-entities');
 var whitespace = require('is-whitespace-character');
 var locate = require('../locate/url');
 
-/* Expose. */
 module.exports = url;
 url.locator = locate;
 url.notInLink = true;
 
-/* Constants. */
 var C_BRACKET_OPEN = '[';
 var C_BRACKET_CLOSE = ']';
 var C_PAREN_OPEN = '(';
@@ -9937,7 +8425,6 @@ var C_PAREN_CLOSE = ')';
 var C_LT = '<';
 var C_AT_SIGN = '@';
 
-/* Protocols. */
 var HTTP_PROTOCOL = 'http://';
 var HTTPS_PROTOCOL = 'https://';
 var MAILTO_PROTOCOL = 'mailto:';
@@ -9950,15 +8437,6 @@ var PROTOCOLS = [
 
 var PROTOCOLS_LENGTH = PROTOCOLS.length;
 
-/**
- * Tokenise a link.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `link` node.
- */
 function url(eat, value, silent) {
   var self = this;
   var subvalue;
@@ -10075,114 +8553,17 @@ function url(eat, value, silent) {
   });
 }
 
-},{"../locate/url":48,"is-whitespace-character":26,"parse-entities":33}],77:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenize:yaml
- * @fileoverview Tokenise YAML.
- */
-
+},{"../locate/url":40,"is-whitespace-character":19,"parse-entities":25}],69:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
-module.exports = yaml;
-yaml.onlyAtStart = true;
-
-/* Constants */
-var FENCE = '---';
-var C_DASH = '-';
-var C_NEWLINE = '\n';
-
-/**
- * Tokenise YAML.
- *
- * @property {Function} locator.
- * @param {function(string)} eat - Eater.
- * @param {string} value - Rest of content.
- * @param {boolean?} [silent] - Whether this is a dry run.
- * @return {Node?|boolean} - `yaml` node.
- */
-function yaml(eat, value, silent) {
-  var self = this;
-  var subvalue;
-  var content;
-  var index;
-  var length;
-  var character;
-  var queue;
-
-  if (
-    !self.options.yaml ||
-    value.charAt(0) !== C_DASH ||
-    value.charAt(1) !== C_DASH ||
-    value.charAt(2) !== C_DASH ||
-    value.charAt(3) !== C_NEWLINE
-  ) {
-    return;
-  }
-
-  subvalue = FENCE + C_NEWLINE;
-  content = queue = '';
-  index = 3;
-  length = value.length;
-
-  while (++index < length) {
-    character = value.charAt(index);
-
-    if (
-      character === C_DASH &&
-      (queue || !content) &&
-      value.charAt(index + 1) === C_DASH &&
-      value.charAt(index + 2) === C_DASH
-    ) {
-      /* istanbul ignore if - never used (yet) */
-      if (silent) {
-        return true;
-      }
-
-      subvalue += queue + FENCE;
-
-      return eat(subvalue)({
-        type: 'yaml',
-        value: content
-      });
-    }
-
-    if (character === C_NEWLINE) {
-      queue += character;
-    } else {
-      subvalue += queue + character;
-      content += queue + character;
-      queue = '';
-    }
-  }
-}
-
-},{}],78:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:tokenizer
- * @fileoverview Markdown tokenizer.
- */
-
-'use strict';
-
-/* Expose. */
 module.exports = factory;
 
-/* Define nodes of a type which can be merged. */
-var MERGEABLE_NODES = {};
+var MERGEABLE_NODES = {
+  text: mergeText,
+  blockquote: mergeBlockquote
+};
 
-/**
- * Check whether a node is mergeable with adjacent nodes.
- *
- * @param {Object} node - Node to check.
- * @return {boolean} - Whether `node` is mergable.
- */
+/* Check whether a node is mergeable with adjacent nodes. */
 function mergeable(node) {
   var start;
   var end;
@@ -10200,28 +8581,16 @@ function mergeable(node) {
       end.column - start.column === node.value.length;
 }
 
-/**
- * Merge two text nodes: `node` into `prev`.
- *
- * @param {Object} prev - Preceding sibling.
- * @param {Object} node - Following sibling.
- * @return {Object} - `prev`.
- */
-MERGEABLE_NODES.text = function (prev, node) {
+/* Merge two text nodes: `node` into `prev`. */
+function mergeText(prev, node) {
   prev.value += node.value;
 
   return prev;
-};
+}
 
-/**
- * Merge two blockquotes: `node` into `prev`, unless in
- * CommonMark mode.
- *
- * @param {Object} prev - Preceding sibling.
- * @param {Object} node - Following sibling.
- * @return {Object} - `prev`, or `node` in CommonMark mode.
- */
-MERGEABLE_NODES.blockquote = function (prev, node) {
+/* Merge two blockquotes: `node` into `prev`, unless in
+ * CommonMark mode. */
+function mergeBlockquote(prev, node) {
   if (this.options.commonmark) {
     return node;
   }
@@ -10229,35 +8598,14 @@ MERGEABLE_NODES.blockquote = function (prev, node) {
   prev.children = prev.children.concat(node.children);
 
   return prev;
-};
+}
 
-/**
- * Construct a tokenizer.  This creates both
- * `tokenizeInline` and `tokenizeBlock`.
- *
- * @example
- *   Parser.prototype.tokenizeInline = tokenizeFactory('inline');
- *
- * @param {string} type - Name of parser, used to find
- *   its expressions (`%sMethods`) and tokenizers
- *   (`%Tokenizers`).
- * @return {Function} - Tokenizer.
- */
+/* Construct a tokenizer.  This creates both
+ * `tokenizeInline` and `tokenizeBlock`. */
 function factory(type) {
   return tokenize;
 
-  /**
-   * Tokenizer for a bound `type`
-   *
-   * @example
-   *   parser = new Parser();
-   *   parser.tokenizeInline('_foo_');
-   *
-   * @param {string} value - Content.
-   * @param {Object} location - Offset at which `value`
-   *   starts.
-   * @return {Array.<Object>} - Nodes.
-   */
+  /* Tokenizer for a bound `type`. */
   function tokenize(value, location) {
     var self = this;
     var offset = self.offset;
@@ -10301,7 +8649,7 @@ function factory(type) {
 
         if (
           method &&
-          (!method.onlyAtStart || self.atStart) &&
+          /* istanbul ignore next */ (!method.onlyAtStart || self.atStart) &&
           (!method.notInList || !self.inList) &&
           (!method.notInBlock || !self.inBlock) &&
           (!method.notInLink || !self.inLink)
@@ -10328,15 +8676,8 @@ function factory(type) {
 
     return tokens;
 
-    /**
-     * Update line, column, and offset based on
-     * `value`.
-     *
-     * @example
-     *   updatePosition('foo');
-     *
-     * @param {string} subvalue - Subvalue to eat.
-     */
+    /* Update line, column, and offset based on
+     * `value`. */
     function updatePosition(subvalue) {
       var lastIndex = -1;
       var index = subvalue.indexOf('\n');
@@ -10362,23 +8703,14 @@ function factory(type) {
       }
     }
 
-    /**
-     * Get offset.  Called before the first character is
-     * eaten to retrieve the range's offsets.
-     *
-     * @return {Function} - `done`, to be called when
-     *   the last character is eaten.
-     */
+    /* Get offset.  Called before the first character is
+     * eaten to retrieve the range's offsets. */
     function getOffset() {
       var indentation = [];
       var pos = line + 1;
 
-      /**
-       * Done.  Called when the last character is
-       * eaten to retrieve the range’s offsets.
-       *
-       * @return {Array.<number>} - Offset.
-       */
+      /* Done.  Called when the last character is
+       * eaten to retrieve the range’s offsets. */
       return function () {
         var last = line + 1;
 
@@ -10392,14 +8724,7 @@ function factory(type) {
       };
     }
 
-    /**
-     * Get the current position.
-     *
-     * @example
-     *   position = now(); // {line: 1, column: 1, offset: 0}
-     *
-     * @return {Object} - Current Position.
-     */
+    /* Get the current position. */
     function now() {
       var pos = {line: line, column: column};
 
@@ -10408,41 +8733,15 @@ function factory(type) {
       return pos;
     }
 
-    /**
-     * Store position information for a node.
-     *
-     * @example
-     *   start = now();
-     *   updatePosition('foo');
-     *   location = new Position(start);
-     *   // {
-     *   //   start: {line: 1, column: 1, offset: 0},
-     *   //   end: {line: 1, column: 3, offset: 2}
-     *   // }
-     *
-     * @param {Object} start - Starting position.
-     */
+    /* Store position information for a node. */
     function Position(start) {
       this.start = start;
       this.end = now();
     }
 
-    /**
-     * Throw when a value is incorrectly eaten.
+    /* Throw when a value is incorrectly eaten.
      * This shouldn’t happen but will throw on new,
-     * incorrect rules.
-     *
-     * @example
-     *   // When the current value is set to `foo bar`.
-     *   validateEat('foo');
-     *   eat('foo');
-     *
-     *   validateEat('bar');
-     *   // throws, because the space is not eaten.
-     *
-     * @param {string} subvalue - Value to be eaten.
-     * @throws {Error} - When `subvalue` cannot be eaten.
-     */
+     * incorrect rules. */
     function validateEat(subvalue) {
       /* istanbul ignore if */
       if (value.substring(0, subvalue.length) !== subvalue) {
@@ -10457,39 +8756,13 @@ function factory(type) {
       }
     }
 
-    /**
-     * Mark position and patch `node.position`.
-     *
-     * @example
-     *   var update = position();
-     *   updatePosition('foo');
-     *   update({});
-     *   // {
-     *   //   position: {
-     *   //     start: {line: 1, column: 1, offset: 0},
-     *   //     end: {line: 1, column: 3, offset: 2}
-     *   //   }
-     *   // }
-     *
-     * @returns {Function} - Updater.
-     */
+    /* Mark position and patch `node.position`. */
     function position() {
       var before = now();
 
       return update;
 
-      /**
-       * Add the position to a node.
-       *
-       * @example
-       *   update({type: 'text', value: 'foo'});
-       *
-       * @param {Node} node - Node to attach position
-       *   on.
-       * @param {Array} [indent] - Indentation for
-       *   `node`.
-       * @return {Node} - `node`.
-       */
+      /* Add the position to a node. */
       function update(node, indent) {
         var prev = node.position;
         var start = prev ? prev.start : before;
@@ -10527,19 +8800,8 @@ function factory(type) {
       }
     }
 
-    /**
-     * Add `node` to `parent`s children or to `tokens`.
-     * Performs merges where possible.
-     *
-     * @example
-     *   add({});
-     *
-     *   add({}, {children: []});
-     *
-     * @param {Object} node - Node to add.
-     * @param {Object} [parent] - Parent to insert into.
-     * @return {Object} - Added or merged into node.
-     */
+    /* Add `node` to `parent`s children or to `tokens`.
+     * Performs merges where possible. */
     function add(node, parent) {
       var children = parent ? parent.children : tokens;
       var prev = children[children.length - 1];
@@ -10565,18 +8827,8 @@ function factory(type) {
       return node;
     }
 
-    /**
-     * Remove `subvalue` from `value`.
-     * `subvalue` must be at the start of `value`.
-     *
-     * @example
-     *   eat('foo')({type: 'text', value: 'foo'});
-     *
-     * @param {string} subvalue - Removed from `value`,
-     *   and passed to `updatePosition`.
-     * @return {Function} - Wrapper around `add`, which
-     *   also adds `position` to node.
-     */
+    /* Remove `subvalue` from `value`.
+     * `subvalue` must be at the start of `value`. */
     function eat(subvalue) {
       var indent = getOffset();
       var pos = position();
@@ -10585,7 +8837,8 @@ function factory(type) {
       validateEat(subvalue);
 
       apply.reset = reset;
-      apply.test = reset.test = test;
+      reset.test = test;
+      apply.test = test;
 
       value = value.substring(subvalue.length);
 
@@ -10595,31 +8848,19 @@ function factory(type) {
 
       return apply;
 
-      /**
-       * Add the given arguments, add `position` to
-       * the returned node, and return the node.
-       *
-       * @param {Object} node - Node to add.
-       * @param {Object} [parent] - Node to insert into.
-       * @return {Node} - Added node.
-       */
+      /* Add the given arguments, add `position` to
+       * the returned node, and return the node. */
       function apply(node, parent) {
         return pos(add(pos(node), parent), indent);
       }
 
-      /**
-       * Functions just like apply, but resets the
+      /* Functions just like apply, but resets the
        * content:  the line and column are reversed,
        * and the eaten value is re-added.
-       *
        * This is useful for nodes with a single
        * type of content, such as lists and tables.
-       *
        * See `apply` above for what parameters are
-       * expected.
-       *
-       * @return {Node} - Added node.
-       */
+       * expected. */
       function reset() {
         var node = apply.apply(null, arguments);
 
@@ -10630,12 +8871,8 @@ function factory(type) {
         return node;
       }
 
-      /**
-       * Test the position, after eating, and reverse
-       * to a not-eaten state.
-       *
-       * @return {Position} - Position after eating `subvalue`.
-       */
+      /* Test the position, after eating, and reverse
+       * to a not-eaten state. */
       function test() {
         var result = pos({});
 
@@ -10649,49 +8886,18 @@ function factory(type) {
   }
 }
 
-},{}],79:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:unescape
- * @fileoverview Unescape escapes.
- */
-
+},{}],70:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = factory;
 
-/**
- * Factory to de-escape a value, based on a list at `key`
- * in `ctx`.
- *
- * @example
- *   var ctx = {escape: ['a']}
- *   var unescape = unescapeFactory(ctx, 'escape');
- *
- * @param {Object} ctx - List of escapable characters.
- * @param {string} key - Key in `map` at which the list
- *   exists.
- * @return {function(string): string} - Function which
- *   takes a value and returns its unescaped version.
- */
+/* Factory to de-escape a value, based on a list at `key`
+ * in `ctx`. */
 function factory(ctx, key) {
   return unescape;
 
-  /**
-   * De-escape a string using the expression at `key`
-   * in `ctx`.
-   *
-   * @example
-   *   var ctx = {escape: ['a']}
-   *   var unescape = unescapeFactory(ctx, 'escape');
-   *   unescape('\a \b'); // 'a \b'
-   *
-   * @param {string} value - Escaped string.
-   * @return {string} - Unescaped string.
-   */
+  /* De-escape a string using the expression at `key`
+   * in `ctx`. */
   function unescape(value) {
     var prev = 0;
     var index = value.indexOf('\\');
@@ -10719,30 +8925,16 @@ function factory(ctx, key) {
   }
 }
 
-},{}],80:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:util:get-indentation
- * @fileoverview Get indentation.
- */
-
+},{}],71:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = indentation;
 
-/* A map of characters, and their column length,
+/* Map of characters, and their column length,
  * which can be used as indentation. */
 var characters = {' ': 1, '\t': 4};
 
-/**
- * Gets indentation information for a line.
- *
- * @param {string} value - Indented line.
- * @return {Object} - Indetation information.
- */
+/* Gets indentation information for a line. */
 function indentation(value) {
   var index = 0;
   var indent = 0;
@@ -10767,684 +8959,107 @@ function indentation(value) {
   return {indent: indent, stops: stops};
 }
 
-},{}],81:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:util:match-comment
- * @fileoverview Match XML character data.
- */
-
+},{}],72:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
-module.exports = match;
+var attributeName = '[a-zA-Z_:][a-zA-Z0-9:._-]*';
+var unquoted = '[^"\'=<>`\\u0000-\\u0020]+';
+var singleQuoted = '\'[^\']*\'';
+var doubleQuoted = '"[^"]*"';
+var attributeValue = '(?:' + unquoted + '|' + singleQuoted + '|' + doubleQuoted + ')';
+var attribute = '(?:\\s+' + attributeName + '(?:\\s*=\\s*' + attributeValue + ')?)';
+var openTag = '<[A-Za-z][A-Za-z0-9\\-]*' + attribute + '*\\s*\\/?>';
+var closeTag = '<\\/[A-Za-z][A-Za-z0-9\\-]*\\s*>';
+var comment = '<!---->|<!--(?:-?[^>-])(?:-?[^-])*-->';
+var processing = '<[?].*?[?]>';
+var declaration = '<![A-Za-z]+\\s+[^>]*>';
+var cdata = '<!\\[CDATA\\[[\\s\\S]*?\\]\\]>';
 
-/* Constants. */
-var START = '<![CDATA[';
-var END = ']]>';
-var END_CHAR = END.charAt(0);
-var START_LENGTH = START.length;
-var END_LENGTH = END.length;
+exports.openCloseTag = new RegExp('^(?:' + openTag + '|' + closeTag + ')');
 
-/**
- * Try to match CDATA.
- *
- * @param {string} value - Value to parse.
- * @return {string?} - When applicable, the CDATA at the
- *   start of `value`.
- */
-function match(value) {
-  var index = START_LENGTH;
-  var queue = value.slice(0, index);
-  var length = value.length;
-  var character;
+exports.tag = new RegExp('^(?:' +
+  openTag + '|' +
+  closeTag + '|' +
+  comment + '|' +
+  processing + '|' +
+  declaration + '|' +
+  cdata +
+')');
 
-  if (queue.toUpperCase() === START) {
-    while (index < length) {
-      character = value.charAt(index);
-
-      if (
-        character === END_CHAR &&
-        value.slice(index, index + END_LENGTH) === END
-      ) {
-        return queue + END;
-      }
-
-      queue += character;
-      index++;
-    }
-  }
-}
-
-},{}],82:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:util:match-comment
- * @fileoverview Match an HTML comment.
- */
-
+},{}],73:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
-module.exports = match;
+module.exports = interrupt;
 
-/* Constants. */
-var START = '<!--';
-var END = '-->';
-var END_CHAR = END.charAt(0);
-var START_LENGTH = START.length;
-var END_LENGTH = END.length;
+function interrupt(interruptors, tokenizers, ctx, params) {
+  var bools = ['pedantic', 'commonmark'];
+  var count = bools.length;
+  var length = interruptors.length;
+  var index = -1;
+  var interruptor;
+  var config;
+  var fn;
+  var offset;
+  var bool;
+  var ignore;
 
-/**
- * Try to match comment.
- *
- * @param {string} value - Value to parse.
- * @param {Object} settings - Configuration as available on
- *   a parser.
- * @return {string?} - When applicable, the comment at the
- *   start of `value`.
- */
-function match(value, settings) {
-  var index = START_LENGTH;
-  var queue = START;
-  var length = value.length;
-  var commonmark = settings.commonmark;
-  var character;
-  var hasNonDash;
+  while (++index < length) {
+    interruptor = interruptors[index];
+    config = interruptor[1] || {};
+    fn = interruptor[0];
+    offset = -1;
+    ignore = false;
 
-  if (value.slice(0, index) === queue) {
-    while (index < length) {
-      character = value.charAt(index);
+    while (++offset < count) {
+      bool = bools[offset];
 
-      if (
-        character === END_CHAR &&
-        value.slice(index, index + END_LENGTH) === END
-      ) {
-        return queue + END;
-      }
-
-      if (commonmark) {
-        if (character === '>' && !hasNonDash) {
-          return;
-        }
-
-        if (character !== '-') {
-          hasNonDash = true;
-        } else if (value.charAt(index + 1) === '-') {
-          return;
-        }
-      }
-
-      queue += character;
-      index++;
-    }
-  }
-}
-
-},{}],83:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:util:match-declaration
- * @fileoverview Match an XML declaration.
- */
-
-'use strict';
-
-/* Dependencies. */
-var alphabetical = require('is-alphabetical');
-var whitespace = require('is-whitespace-character');
-
-/* Expose. */
-module.exports = match;
-
-/* Constants. */
-var C_EXCLAMATION_MARK = '!';
-var C_LT = '<';
-var C_GT = '>';
-
-/**
- * Try to match a declaration.
- *
- * @param {string} value - Value to parse.
- * @return {string?} - When applicable, the declaration at
- *   the start of `value`.
- */
-function match(value) {
-  var index = 0;
-  var length = value.length;
-  var queue = '';
-  var subqueue = '';
-  var character;
-
-  if (
-    value.charAt(index) === C_LT &&
-    value.charAt(++index) === C_EXCLAMATION_MARK
-  ) {
-    queue = C_LT + C_EXCLAMATION_MARK;
-    index++;
-
-    /* Eat as many alphabetic characters as
-     * possible. */
-    while (index < length) {
-      character = value.charAt(index);
-
-      if (!alphabetical(character)) {
+      if (config[bool] !== undefined && config[bool] !== ctx.options[bool]) {
+        ignore = true;
         break;
       }
-
-      subqueue += character;
-      index++;
     }
 
-    character = value.charAt(index);
-
-    if (!subqueue || !whitespace(character)) {
-      return;
+    if (ignore) {
+      continue;
     }
 
-    queue += subqueue + character;
-    index++;
-
-    while (index < length) {
-      character = value.charAt(index);
-
-      if (character === C_GT) {
-        return queue;
-      }
-
-      queue += character;
-      index++;
+    if (tokenizers[fn].apply(ctx, params)) {
+      return true;
     }
   }
+
+  return false;
 }
 
-},{"is-alphabetical":20,"is-whitespace-character":26}],84:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:util:match-instruction
- * @fileoverview Match XML processing instruction.
- */
-
+},{}],74:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
-module.exports = match;
-
-/* Constants. */
-var C_QUESTION_MARK = '?';
-var C_LT = '<';
-var C_GT = '>';
-
-/**
- * Try to match a processing instruction.
- *
- * @param {string} value - Value to parse.
- * @return {string?} - When applicable, the processing
- *   instruction at the start of `value`.
- */
-function match(value) {
-  var index = 0;
-  var queue = '';
-  var length = value.length;
-  var character;
-
-  if (
-    value.charAt(index) === C_LT &&
-    value.charAt(++index) === C_QUESTION_MARK
-  ) {
-    queue = C_LT + C_QUESTION_MARK;
-    index++;
-
-    while (index < length) {
-      character = value.charAt(index);
-
-      if (
-        character === C_QUESTION_MARK &&
-        value.charAt(index + 1) === C_GT
-      ) {
-        return queue + character + C_GT;
-      }
-
-      queue += character;
-      index++;
-    }
-  }
-}
-
-},{}],85:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:util:match-tag-closing
- * @fileoverview Match an HTML closing tag.
- */
-
-'use strict';
-
-/* Dependencies. */
-var alphabetical = require('is-alphabetical');
-var decimal = require('is-decimal');
-var whitespace = require('is-whitespace-character');
-
-/* Expose. */
-module.exports = match;
-
-/* Constants. */
-var C_LT = '<';
-var C_GT = '>';
-var C_SLASH = '/';
-
-/**
- * Try to match a closing tag.
- *
- * @param {string} value - Value to parse.
- * @param {Array.<string>?} [blocks] - Known block tag-names,
- *   which must be matched if given.
- * @return {string?} - When applicable, the closing tag at
- *   the start of `value`.
- */
-function match(value, blocks) {
-  var index = 0;
-  var length = value.length;
-  var queue = '';
-  var subqueue = '';
-  var character;
-
-  if (
-    value.charAt(index) === C_LT &&
-    value.charAt(++index) === C_SLASH
-  ) {
-    queue = C_LT + C_SLASH;
-    subqueue = character = value.charAt(++index);
-
-    if (!alphabetical(character)) {
-      return;
-    }
-
-    index++;
-
-    /* Eat as many alphabetic characters as
-     * possible. */
-    while (index < length) {
-      character = value.charAt(index);
-
-      if (!alphabetical(character) && !decimal(character)) {
-        break;
-      }
-
-      subqueue += character;
-      index++;
-    }
-
-    if (blocks && blocks.indexOf(subqueue.toLowerCase()) === -1) {
-      return;
-    }
-
-    queue += subqueue;
-
-    /* Eat white-space. */
-    while (index < length) {
-      character = value.charAt(index);
-
-      if (!whitespace(character)) {
-        break;
-      }
-
-      queue += character;
-      index++;
-    }
-
-    if (value.charAt(index) === C_GT) {
-      return queue + C_GT;
-    }
-  }
-}
-
-},{"is-alphabetical":20,"is-decimal":24,"is-whitespace-character":26}],86:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:util:match-tag-opening
- * @fileoverview Match an HTML opening tag.
- */
-
-'use strict';
-
-/* Dependencies. */
-var alphabetical = require('is-alphabetical');
-var decimal = require('is-decimal');
-var whitespace = require('is-whitespace-character');
-
-/* Expose. */
-module.exports = match;
-
-/* Constants. */
-var C_LT = '<';
-var C_GT = '>';
-var C_SLASH = '/';
-var C_DOUBLE_QUOTE = '"';
-var C_SINGLE_QUOTE = '\'';
-var C_EQUALS = '=';
-
-/**
- * Try to match a closing tag.
- *
- * @param {string} value - Value to parse.
- * @param {Array.<string>?} [blocks] - Known block tag-names,
- *   which must be matched if given.
- * @return {string?} - When applicable, the closing tag at
- *   the start of `value`.
- */
-function match(value, blocks) {
-  var index = 0;
-  var length = value.length;
-  var queue = '';
-  var subqueue = '';
-  var character = value.charAt(index);
-  var hasEquals;
-  var test;
-
-  if (character === C_LT) {
-    queue = character;
-    subqueue = character = value.charAt(++index);
-
-    if (!alphabetical(character)) {
-      return;
-    }
-
-    index++;
-
-    /* Eat as many alphabetic characters as
-     * possible. */
-    while (index < length) {
-      character = value.charAt(index);
-
-      if (!alphabetical(character) && !decimal(character)) {
-        break;
-      }
-
-      subqueue += character;
-      index++;
-    }
-
-    if (blocks && blocks.indexOf(subqueue.toLowerCase()) === -1) {
-      return;
-    }
-
-    queue += subqueue;
-    subqueue = '';
-
-    /* Find attributes. */
-    while (index < length) {
-      /* Eat white-space. */
-      while (index < length) {
-        character = value.charAt(index);
-
-        if (!whitespace(character)) {
-          break;
-        }
-
-        subqueue += character;
-        index++;
-      }
-
-      if (!subqueue) {
-        break;
-      }
-
-      /* Eat an attribute name. */
-      queue += subqueue;
-      subqueue = '';
-      character = value.charAt(index);
-
-      if (
-        alphabetical(character) ||
-        character === '_' ||
-        character === ':'
-      ) {
-        subqueue = character;
-        index++;
-
-        while (index < length) {
-          character = value.charAt(index);
-
-          if (
-            !alphabetical(character) &&
-            !decimal(character) &&
-            character !== '_' &&
-            character !== ':' &&
-            character !== '.' &&
-            character !== '-'
-          ) {
-            break;
-          }
-
-          subqueue += character;
-          index++;
-        }
-      }
-
-      if (!subqueue) {
-        break;
-      }
-
-      queue += subqueue;
-      subqueue = '';
-      hasEquals = false;
-
-      /* Eat zero or more white-space and one
-       * equals sign. */
-      while (index < length) {
-        character = value.charAt(index);
-
-        if (!whitespace(character)) {
-          if (!hasEquals && character === C_EQUALS) {
-            hasEquals = true;
-          } else {
-            break;
-          }
-        }
-
-        subqueue += character;
-        index++;
-      }
-
-      queue += subqueue;
-      subqueue = '';
-
-      if (hasEquals) {
-        character = value.charAt(index);
-        queue += subqueue;
-
-        if (character === C_DOUBLE_QUOTE) {
-          test = isDoubleQuotedAttributeCharacter;
-          subqueue = character;
-          index++;
-        } else if (character === C_SINGLE_QUOTE) {
-          test = isSingleQuotedAttributeCharacter;
-          subqueue = character;
-          index++;
-        } else {
-          test = isUnquotedAttributeCharacter;
-          subqueue = '';
-        }
-
-        while (index < length) {
-          character = value.charAt(index);
-
-          if (!test(character)) {
-            break;
-          }
-
-          subqueue += character;
-          index++;
-        }
-
-        character = value.charAt(index);
-        index++;
-
-        if (!test.delimiter) {
-          if (subqueue.length === 0) {
-            return;
-          }
-
-          index--;
-        } else if (character === test.delimiter) {
-          subqueue += character;
-        } else {
-          return;
-        }
-
-        queue += subqueue;
-        subqueue = '';
-      } else {
-        queue += subqueue;
-      }
-    }
-
-    /* More white-space is already eaten by the
-     * attributes subroutine. */
-    character = value.charAt(index);
-
-    /* Eat an optional backslash (for self-closing
-     * tags). */
-    if (character === C_SLASH) {
-      queue += character;
-      character = value.charAt(++index);
-    }
-
-    return character === C_GT ? queue + character : null;
-  }
-}
-
-/**
- * Check whether `character` can be inside an unquoted
- * attribute value.
- *
- * @param {string} character - Single character to check.
- * @return {boolean} - Whether `character` can be inside
- *   an unquoted attribute value.
- */
-function isUnquotedAttributeCharacter(character) {
-  return character !== C_DOUBLE_QUOTE &&
-    character !== C_SINGLE_QUOTE &&
-    character !== C_EQUALS &&
-    character !== C_LT &&
-    character !== C_GT &&
-    character !== '`';
-}
-
-/**
- * Check whether `character` can be inside a double-quoted
- * attribute value.
- *
- * @property {string} delimiter - Closing delimiter.
- * @param {string} character - Single character to check.
- * @return {boolean} - Whether `character` can be inside
- *   a double-quoted attribute value.
- */
-function isDoubleQuotedAttributeCharacter(character) {
-  return character !== C_DOUBLE_QUOTE;
-}
-
-isDoubleQuotedAttributeCharacter.delimiter = C_DOUBLE_QUOTE;
-
-/**
- * Check whether `character` can be inside a single-quoted
- * attribute value.
- *
- * @property {string} delimiter - Closing delimiter.
- * @param {string} character - Single character to check.
- * @return {boolean} - Whether `character` can be inside
- *   a single-quoted attribute value.
- */
-function isSingleQuotedAttributeCharacter(character) {
-  return character !== C_SINGLE_QUOTE;
-}
-
-isSingleQuotedAttributeCharacter.delimiter = C_SINGLE_QUOTE;
-
-},{"is-alphabetical":20,"is-decimal":24,"is-whitespace-character":26}],87:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:util:normalize
- * @fileoverview Normalize an identifier.
- */
-
-'use strict';
-
-/* Dependencies. */
 var collapseWhiteSpace = require('collapse-white-space');
 
-/* Expose. */
 module.exports = normalize;
 
-/**
- * Normalize an identifier.  Collapses multiple white space
- * characters into a single space, and removes casing.
- *
- * @example
- *   normalizeIdentifier('FOO\t bar'); // 'foo bar'
- *
- * @param {string} value - Content to normalize.
- * @return {string} - Normalized content.
- */
+/* Normalize an identifier.  Collapses multiple white space
+ * characters into a single space, and removes casing. */
 function normalize(value) {
   return collapseWhiteSpace(value).toLowerCase();
 }
 
-},{"collapse-white-space":13}],88:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:parse:util:remove-indentation
- * @fileoverview Remove indentation.
- */
-
+},{"collapse-white-space":9}],75:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var trim = require('trim');
 var repeat = require('repeat-string');
 var getIndent = require('./get-indentation');
 
-/* Expose. */
 module.exports = indentation;
 
-/* Characters. */
 var C_SPACE = ' ';
 var C_NEWLINE = '\n';
 var C_TAB = '\t';
 
-/**
- * Remove the minimum indent from every line in `value`.
+/* Remove the minimum indent from every line in `value`.
  * Supports both tab, spaced, and mixed indentation (as
- * well as possible).
- *
- * @example
- *   removeIndentation('  foo'); // 'foo'
- *   removeIndentation('    foo', 2); // '  foo'
- *   removeIndentation('\tfoo', 2); // '  foo'
- *   removeIndentation('  foo\n bar'); // ' foo\n bar'
- *
- * @param {string} value - Value to trim.
- * @param {number?} [maximum] - Maximum indentation
- *   to remove.
- * @return {string} - Unindented `value`.
- */
+ * well as possible). */
 function indentation(value, maximum) {
   var values = value.split(C_NEWLINE);
   var position = values.length + 1;
@@ -11509,71 +9124,40 @@ function indentation(value, maximum) {
   return values.join(C_NEWLINE);
 }
 
-},{"./get-indentation":80,"repeat-string":135,"trim":142}],89:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify
- * @fileoverview Markdown Compiler.
- */
-
+},{"./get-indentation":71,"repeat-string":121,"trim":128}],76:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var unherit = require('unherit');
+var xtend = require('xtend');
 var Compiler = require('./lib/compiler.js');
 
-/* Expose. */
 module.exports = stringify;
-
-/**
- * Attacher.
- *
- * @param {unified} processor - Unified processor.
- */
-function stringify(processor) {
-  processor.Compiler = unherit(Compiler);
-}
-
-/* Patch `Compiler`. */
 stringify.Compiler = Compiler;
 
-},{"./lib/compiler.js":90,"unherit":144}],90:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify
- * @fileoverview Markdown compiler
- */
+function stringify(options) {
+  var Local = unherit(Compiler);
+  Local.prototype.options = xtend(Local.prototype.options, this.data('settings'), options);
+  this.Compiler = Local;
+}
 
+},{"./lib/compiler.js":77,"unherit":130,"xtend":140}],77:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var xtend = require('xtend');
 var toggle = require('state-toggle');
 
-/* Expose. */
 module.exports = Compiler;
 
-/**
- * Construct a new compiler.
- *
- * @constructor
- * @class {Compiler}
- * @param {File} file - Virtual file.
- * @param {Object?} [options] - Passed to
- *   `Compiler#setOptions()`.
- */
-function Compiler(file, options) {
-  this.inLink = this.inTable = false;
+/* Construct a new compiler. */
+function Compiler(tree, file) {
+  this.inLink = false;
+  this.inTable = false;
+  this.tree = tree;
   this.file = file;
   this.options = xtend(this.options);
-  this.setOptions(options);
+  this.setOptions({});
 }
 
-/* Cache prototype. */
 var proto = Compiler.prototype;
 
 /* Enter and exit helpers. */
@@ -11602,7 +9186,6 @@ proto.visitors = {
   list: require('./visitors/list'),
   listItem: require('./visitors/list-item'),
   inlineCode: require('./visitors/inline-code'),
-  yaml: require('./visitors/yaml'),
   code: require('./visitors/code'),
   html: require('./visitors/html'),
   thematicBreak: require('./visitors/thematic-break'),
@@ -11622,15 +9205,7 @@ proto.visitors = {
   tableCell: require('./visitors/table-cell')
 };
 
-},{"./defaults":91,"./macro/all":93,"./macro/block":94,"./macro/compile":95,"./macro/one":96,"./macro/ordered-items":97,"./macro/unordered-items":98,"./set-options":99,"./util/enter-link-reference":103,"./visitors/blockquote":108,"./visitors/break":109,"./visitors/code":110,"./visitors/definition":111,"./visitors/delete":112,"./visitors/emphasis":113,"./visitors/footnote":116,"./visitors/footnote-definition":114,"./visitors/footnote-reference":115,"./visitors/heading":117,"./visitors/html":118,"./visitors/image":120,"./visitors/image-reference":119,"./visitors/inline-code":121,"./visitors/link":123,"./visitors/link-reference":122,"./visitors/list":125,"./visitors/list-item":124,"./visitors/paragraph":126,"./visitors/root":127,"./visitors/strong":128,"./visitors/table":130,"./visitors/table-cell":129,"./visitors/text":131,"./visitors/thematic-break":132,"./visitors/yaml":133,"state-toggle":137,"xtend":154}],91:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:defaults
- * @fileoverview Default options for `stringify`.
- */
-
+},{"./defaults":78,"./macro/all":80,"./macro/block":81,"./macro/compile":82,"./macro/one":83,"./macro/ordered-items":84,"./macro/unordered-items":85,"./set-options":86,"./util/enter-link-reference":90,"./visitors/blockquote":95,"./visitors/break":96,"./visitors/code":97,"./visitors/definition":98,"./visitors/delete":99,"./visitors/emphasis":100,"./visitors/footnote":103,"./visitors/footnote-definition":101,"./visitors/footnote-reference":102,"./visitors/heading":104,"./visitors/html":105,"./visitors/image":107,"./visitors/image-reference":106,"./visitors/inline-code":108,"./visitors/link":110,"./visitors/link-reference":109,"./visitors/list":112,"./visitors/list-item":111,"./visitors/paragraph":113,"./visitors/root":114,"./visitors/strong":115,"./visitors/table":117,"./visitors/table-cell":116,"./visitors/text":118,"./visitors/thematic-break":119,"state-toggle":123,"xtend":140}],78:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -11642,6 +9217,8 @@ module.exports = {
   closeAtx: false,
   looseTable: false,
   spacedTable: true,
+  paddedTable: true,
+  stringLength: stringLength,
   incrementListMarker: true,
   fences: false,
   fence: '`',
@@ -11654,57 +9231,31 @@ module.exports = {
   emphasis: '_'
 };
 
-},{}],92:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:escape
- * @fileoverview Escape text to prevent it turning
- *   into markdown syntax.
- */
+function stringLength(value) {
+  return value.length;
+}
 
+},{}],79:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var decimal = require('is-decimal');
 var alphanumeric = require('is-alphanumeric');
 var whitespace = require('is-whitespace-character');
 var escapes = require('markdown-escapes');
 var prefix = require('./util/entity-prefix-length');
 
-/* Expose. */
 module.exports = factory;
 
-/* Constants. */
 var BACKSLASH = '\\';
 var BULLETS = ['*', '-', '+'];
 var ALLIGNMENT = [':', '-', ' ', '|'];
 var entities = {'<': '&lt;', ':': '&#x3A;', '&': '&amp;', '|': '&#x7C;', '~': '&#x7E;'};
 
-/**
- * Factory to escape characters.
- *
- * @example
- *   var escape = escapeFactory({ commonmark: true });
- *   escape('x*x', { type: 'text', value: 'x*x' }) // 'x\\*x'
- *
- * @param {Object} options - Compiler options.
- * @return {function(value, node, parent): string} - Function which
- *   takes a value and a node and (optionally) its parent and returns
- *   its escaped value.
- */
+/* Factory to escape characters. */
 function factory(options) {
   return escape;
 
-  /**
-   * Escape punctuation characters in a node's value.
-   *
-   * @param {string} value - Value to escape.
-   * @param {Object} node - Node in which `value` exists.
-   * @param {Object} [parent] - Parent of `node`.
-   * @return {string} - Escaped `value`.
-   */
+  /* Escape punctuation characters in a node's value. */
   function escape(value, node, parent) {
     var self = this;
     var gfm = options.gfm;
@@ -11905,9 +9456,7 @@ function factory(options) {
   }
 }
 
-/**
- * Check if `index` in `value` is inside an alignment row.
- */
+/* Check if `index` in `value` is inside an alignment row. */
 function alignment(value, index) {
   var start = value.lastIndexOf('\n', index);
   var end = value.indexOf('\n', index);
@@ -11924,41 +9473,23 @@ function alignment(value, index) {
   return true;
 }
 
-/**
- * Check if `node` is a text node.
- */
+/* Check if `node` is a text node. */
 function text(node) {
   return node && node.type === 'text';
 }
 
-/**
- * Check if `value` ends in a protocol.
- */
+/* Check if `value` ends in a protocol. */
 function protocol(value) {
   var val = value.slice(-6).toLowerCase();
   return val === 'mailto' || val.slice(-5) === 'https' || val.slice(-4) === 'http';
 }
 
-},{"./util/entity-prefix-length":104,"is-alphanumeric":21,"is-decimal":24,"is-whitespace-character":26,"markdown-escapes":29}],93:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:macro:all
- * @fileoverview Stringify children in a node.
- */
-
+},{"./util/entity-prefix-length":91,"is-alphanumeric":13,"is-decimal":16,"is-whitespace-character":19,"markdown-escapes":22}],80:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = all;
 
-/**
- * Visit all children of `parent`.
- *
- * @param {Object} parent - Parent node of children.
- * @return {Array.<string>} - List of compiled children.
- */
+/* Visit all children of `parent`. */
 function all(parent) {
   var self = this;
   var children = parent.children;
@@ -11973,31 +9504,16 @@ function all(parent) {
   return results;
 }
 
-},{}],94:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:macro:block
- * @fileoverview Stringify a block.
- */
-
+},{}],81:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = block;
 
-/**
- * Stringify a block node with block children (e.g., `root`
+/* Stringify a block node with block children (e.g., `root`
  * or `blockquote`).
- *
  * Knows about code following a list, or adjacent lists
  * with similar bullets, and places an extra newline
- * between them.
- *
- * @param {Object} node
- * @return {string} - Compiled children.
- */
+ * between them. */
 function block(node) {
   var self = this;
   var values = [];
@@ -12035,54 +9551,23 @@ function block(node) {
   return values.join('');
 }
 
-},{}],95:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:macro:compile
- * @fileoverview Compile the given node.
- */
-
+},{}],82:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var compact = require('mdast-util-compact');
 
-/* Expose. */
 module.exports = compile;
 
-/**
- * Stringify the given tree.
- *
- * @param {Node} node - Syntax tree.
- * @return {string} - Markdown document.
- */
-function compile(node) {
-  return this.visit(compact(node, this.options.commonmark));
+/* Stringify the given tree. */
+function compile() {
+  return this.visit(compact(this.tree, this.options.commonmark));
 }
 
-},{"mdast-util-compact":31}],96:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:macro:one
- * @fileoverview Stringify a node.
- */
-
+},{"mdast-util-compact":24}],83:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = one;
 
-/**
- * Visit a node.
- *
- * @param {Object} node - Node.
- * @param {Object?} [parent] - `node`s parent.
- * @return {string} - Compiled `node`.
- */
 function one(node, parent) {
   var self = this;
   var visitors = self.visitors;
@@ -12101,22 +9586,12 @@ function one(node, parent) {
   return visitors[node.type].call(self, node, parent);
 }
 
-},{}],97:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:macro:ordered-items
- * @fileoverview Stringify ordered list items.
- */
-
+},{}],84:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = orderedItems;
 
-/**
- * Visit ordered list items.
+/* Visit ordered list items.
  *
  * Starts the list with
  * `node.start` and increments each following list item
@@ -12130,13 +9605,6 @@ module.exports = orderedItems;
  *
  *     1. foo
  *     1. bar
- *
- * Adds an extra line after an item if it has
- * `loose: true`.
- *
- * @param {Object} node - `list` node with
- *   `ordered: true`.
- * @return {string} - Compiled children.
  */
 function orderedItems(node) {
   var self = this;
@@ -12157,28 +9625,13 @@ function orderedItems(node) {
   return values.join('\n');
 }
 
-},{}],98:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:macro:unordered-items
- * @fileoverview Stringify unordered list items.
- */
-
+},{}],85:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = unorderedItems;
 
-/**
- * Visit unordered list items.
- *
+/* Visit unordered list items.
  * Uses `options.bullet` as each item's bullet.
- *
- * @param {Object} node - `list` node with
- *   `ordered: false`.
- * @return {string} - Compiled children.
  */
 function unorderedItems(node) {
   var self = this;
@@ -12196,25 +9649,15 @@ function unorderedItems(node) {
   return values.join('\n');
 }
 
-},{}],99:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:set-options
- * @fileoverview Set configuration.
- */
-
+},{}],86:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var xtend = require('xtend');
 var encode = require('stringify-entities');
 var defaults = require('./defaults');
 var escapeFactory = require('./escape');
 var returner = require('./util/returner');
 
-/* Expose. */
 module.exports = setOptions;
 
 /* Map of applicable enum's. */
@@ -12232,18 +9675,12 @@ var maps = {
 var validate = {
   boolean: validateBoolean,
   string: validateString,
-  number: validateNumber
+  number: validateNumber,
+  function: validateFunction
 };
 
-/**
- * Set options.  Does not overwrite previously set
- * options.
- *
- * @this {Compiler}
- * @throws {Error} - When an option is invalid.
- * @param {Object?} [options] - Stringify settings.
- * @return {Compiler} - `self`.
- */
+/* Set options.  Does not overwrite previously set
+ * options. */
 function setOptions(options) {
   var self = this;
   var current = self.options;
@@ -12259,7 +9696,7 @@ function setOptions(options) {
   }
 
   for (key in defaults) {
-    validate[typeof current[key]](options, key, current[key], maps[key]);
+    validate[typeof defaults[key]](options, key, current[key], maps[key]);
   }
 
   ruleRepetition = options.ruleRepetition;
@@ -12276,28 +9713,15 @@ function setOptions(options) {
   return self;
 }
 
-/**
- * Throw an exception with in its `message` `value`
- * and `name`.
- *
- * @param {*} value - Invalid value.
- * @param {string} name - Setting name.
- */
+/* Throw an exception with in its `message` `value`
+ * and `name`. */
 function raise(value, name) {
   throw new Error('Invalid value `' + value + '` for setting `' + name + '`');
 }
 
-/**
- * Validate a value to be boolean. Defaults to `def`.
+/* Validate a value to be boolean. Defaults to `def`.
  * Raises an exception with `context[name]` when not
- * a boolean.
- *
- * @throws {Error} - When a setting is neither omitted nor
- *   a boolean.
- * @param {Object} context - Settings.
- * @param {string} name - Setting name.
- * @param {boolean} def - Default value.
- */
+ * a boolean. */
 function validateBoolean(context, name, def) {
   var value = context[name];
 
@@ -12312,17 +9736,9 @@ function validateBoolean(context, name, def) {
   context[name] = value;
 }
 
-/**
- * Validate a value to be boolean. Defaults to `def`.
+/* Validate a value to be boolean. Defaults to `def`.
  * Raises an exception with `context[name]` when not
- * a boolean.
- *
- * @throws {Error} - When a setting is neither omitted nor
- *   a number.
- * @param {Object} context - Settings.
- * @param {string} name - Setting name.
- * @param {number} def - Default value.
- */
+ * a boolean. */
 function validateNumber(context, name, def) {
   var value = context[name];
 
@@ -12337,18 +9753,9 @@ function validateNumber(context, name, def) {
   context[name] = value;
 }
 
-/**
- * Validate a value to be in `map`. Defaults to `def`.
+/* Validate a value to be in `map`. Defaults to `def`.
  * Raises an exception with `context[name]` when not
- * in `map`.
- *
- * @throws {Error} - When a setting is neither omitted nor
- *   in `map`.
- * @param {Object} context - Settings.
- * @param {string} name - Setting name.
- * @param {string} def - Default value.
- * @param {Object} map - Enum.
- */
+ * in `map`. */
 function validateString(context, name, def, map) {
   var value = context[name];
 
@@ -12365,19 +9772,29 @@ function validateString(context, name, def, map) {
   context[name] = value;
 }
 
-/**
- * Factory to encode HTML entities.
+/* Validate a value to be function. Defaults to `def`.
+ * Raises an exception with `context[name]` when not
+ * a function. */
+function validateFunction(context, name, def) {
+  var value = context[name];
+
+  if (value == null) {
+    value = def;
+  }
+
+  if (typeof value !== 'function') {
+    raise(value, 'options.' + name);
+  }
+
+  context[name] = value;
+}
+
+/* Factory to encode HTML entities.
  * Creates a no-operation function when `type` is
  * `'false'`, a function which encodes using named
  * references when `type` is `'true'`, and a function
  * which encodes using numbered references when `type` is
- * `'numbers'`.
- *
- * @param {string} type - Either `'true'`, `'false'`, or
- *   `'numbers'`.
- * @return {function(string): string} - Function which
- *   takes a value and returns its encoded version.
- */
+ * `'numbers'`. */
 function encodeFactory(type) {
   var options = {};
 
@@ -12390,62 +9807,35 @@ function encodeFactory(type) {
   }
 
   if (type === 'escape') {
-    options.escapeOnly = options.useNamedReferences = true;
+    options.escapeOnly = true;
+    options.useNamedReferences = true;
   }
 
   return wrapped;
 
-  /**
-   * Encode HTML entities using the bound options.
-   *
-   * @param {string} value - Content.
-   * @param {Object} [node] - Node which is compiled.
-   * @return {string} - Encoded content.
-   */
+  /* Encode HTML entities using the bound options. */
   function wrapped(value) {
     return encode(value, options);
   }
 }
 
-},{"./defaults":91,"./escape":92,"./util/returner":107,"stringify-entities":138,"xtend":154}],100:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:util:copy-identifier-encoding
- * @fileoverview Encode based on the identifier.
- */
-
+},{"./defaults":78,"./escape":79,"./util/returner":94,"stringify-entities":125,"xtend":140}],87:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var entityPrefixLength = require('./entity-prefix-length');
 
-/* Expose. */
 module.exports = copy;
 
-/* Punctuation characters. */
-var PUNCTUATION = /[-!"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~_]/;
+var PUNCTUATION = /[-!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~_]/;
 
-/**
- * For shortcut and collapsed reference links, the contents
+/* For shortcut and collapsed reference links, the contents
  * is also an identifier, so we need to restore the original
  * encoding and escaping that were present in the source
  * string.
  *
  * This function takes the unescaped & unencoded value from
  * shortcut's child nodes and the identifier and encodes
- * the former according to the latter.
- *
- * @example
- *   copyIdentifierEncoding('a*b', 'a\\*b*c')
- *   // 'a\\*b*c'
- *
- * @param {string} value - Unescaped and unencoded stringified
- *   link value.
- * @param {string} identifier - Link identifier.
- * @return {string} - Encoded link value.
- */
+ * the former according to the latter. */
 function copy(value, identifier) {
   var length = value.length;
   var count = identifier.length;
@@ -12491,85 +9881,38 @@ function copy(value, identifier) {
   return result.join('');
 }
 
-},{"./entity-prefix-length":104}],101:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:util:enclose-title
- * @fileoverview Quote a `title` the best way possible.
- */
-
+},{"./entity-prefix-length":91}],88:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = enclose;
 
-/**
- * There is currently no way to support nested delimiters
+/* There is currently no way to support nested delimiters
  * across Markdown.pl, CommonMark, and GitHub (RedCarpet).
  * The following code supports Markdown.pl and GitHub.
  * CommonMark is not supported when mixing double- and
- * single quotes inside a title.
- *
- * @see https://github.com/vmg/redcarpet/issues/473
- * @see https://github.com/jgm/CommonMark/issues/308
- *
- * @example
- *   encloseTitle('foo') // '"foo"'
- *   encloseTitle('foo \'bar\' baz') // '"foo \'bar\' baz"'
- *   encloseTitle('foo "bar" baz') // '\'foo "bar" baz\''
- *   encloseTitle('foo "bar" \'baz\'') // '"foo "bar" \'baz\'"'
- *
- * @param {string} title - Content.
- * @return {string} - Properly enclosed title.
- */
+ * single quotes inside a title. */
 function enclose(title) {
   var delimiter = title.indexOf('"') === -1 ? '"' : '\'';
   return delimiter + title + delimiter;
 }
 
-},{}],102:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:util:enclose-uri
- * @fileoverview Wrap `url` in angle brackets when needed.
- */
-
+},{}],89:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var count = require('ccount');
 
-/* Expose. */
 module.exports = enclose;
 
-/* Constants. */
 var re = /\s/;
 
-/**
- * Wrap `url` in angle brackets when needed, or when
+/* Wrap `url` in angle brackets when needed, or when
  * forced.
- *
  * In links, images, and definitions, the URL part needs
  * to be enclosed when it:
  *
  * - has a length of `0`;
  * - contains white-space;
  * - has more or less opening than closing parentheses.
- *
- * @example
- *   encloseURI('foo bar') // '<foo bar>'
- *   encloseURI('foo(bar(baz)') // '<foo(bar(baz)>'
- *   encloseURI('') // '<>'
- *   encloseURI('example.com') // 'example.com'
- *   encloseURI('example.com', true) // '<example.com>'
- *
- * @param {string} uri - URI to enclose.
- * @param {boolean?} [always] - Force enclosing.
- * @return {boolean} - Properly enclosed `uri`.
  */
 function enclose(uri, always) {
   if (always || uri.length === 0 || re.test(uri) || count(uri, '(') !== count(uri, ')')) {
@@ -12579,25 +9922,14 @@ function enclose(uri, always) {
   return uri;
 }
 
-},{"ccount":4}],103:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:util:enter-link-reference
- * @fileoverview Enter a reference.
- */
-
+},{"ccount":4}],90:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var returner = require('./returner');
 
-/* Expose. */
 module.exports = enter;
 
-/**
- * Shortcut and collapsed link references need no escaping
+/* Shortcut and collapsed link references need no escaping
  * and encoding during the processing of child nodes (it
  * must be implied from identifier).
  *
@@ -12605,10 +9937,6 @@ module.exports = enter;
  * and collapsed references.
  *
  * Implies `enterLink`.
- *
- * @param {Compiler} compiler - Compiler instance.
- * @param {LinkReference} node - LinkReference node.
- * @return {Function} - Exit state.
  */
 function enter(compiler, node) {
   var encode = compiler.encode;
@@ -12622,7 +9950,8 @@ function enter(compiler, node) {
     return exit;
   }
 
-  compiler.encode = compiler.escape = returner;
+  compiler.escape = returner;
+  compiler.encode = returner;
 
   return function () {
     compiler.encode = encode;
@@ -12631,35 +9960,16 @@ function enter(compiler, node) {
   };
 }
 
-},{"./returner":107}],104:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:util:entity-prefix-length
- * @fileoverview Encode based on the identifier.
- */
-
+},{"./returner":94}],91:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var decode = require('parse-entities');
 
-/* Expose. */
 module.exports = length;
 
-/**
- * Returns the length of HTML entity that is a prefix of
+/* Returns the length of HTML entity that is a prefix of
  * the given string (excluding the ampersand), 0 if it
- * does not start with an entity.
- *
- * @example
- *   entityPrefixLength('&copycat') // 4
- *   entityPrefixLength('&foo &amp &bar') // 0
- *
- * @param {string} value - Input string.
- * @return {number} - Length of an entity.
- */
+ * does not start with an entity. */
 function length(value) {
   var prefix;
 
@@ -12675,33 +9985,17 @@ function length(value) {
   return prefix.length - decode(prefix).length;
 }
 
-},{"parse-entities":33}],105:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:util:label
- * @fileoverview Stringify a reference label.
- */
-
+},{"parse-entities":25}],92:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = label;
 
-/**
- * Stringify a reference label.
- *
+/* Stringify a reference label.
  * Because link references are easily, mistakingly,
  * created (for example, `[foo]`), reference nodes have
  * an extra property depicting how it looked in the
  * original document, so stringification can cause minimal
- * changes.
- *
- * @param {Object} node - `linkReference` or
- *   `imageReference` node.
- * @return {string} - Markdown label reference.
- */
+ * changes. */
 function label(node) {
   var type = node.referenceType;
   var value = type === 'full' ? node.identifier : '';
@@ -12709,37 +10003,17 @@ function label(node) {
   return type === 'shortcut' ? value : '[' + value + ']';
 }
 
-},{}],106:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:util:pad
- * @fileoverview Pad a given value.
- */
-
+},{}],93:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var repeat = require('repeat-string');
 
-/* Expose. */
 module.exports = pad;
 
-/* Constants. */
 var INDENT = 4;
 
-/**
- * Pad `value` with `level * INDENT` spaces.  Respects
- * lines. Ignores empty lines.
- *
- * @example
- *   pad('foo', 1) // '    foo'
- *
- * @param {string} value - Content.
- * @param {number} level - Indentation level.
- * @return {string} - Padded `value`.
- */
+/* Pad `value` with `level * INDENT` spaces.  Respects
+ * lines. Ignores empty lines. */
 function pad(value, level) {
   var index;
   var padding;
@@ -12758,48 +10032,20 @@ function pad(value, level) {
   return value.join('\n');
 }
 
-},{"repeat-string":135}],107:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:util:returner
- * @fileoverview Return the given value.
- */
-
+},{"repeat-string":121}],94:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = returner;
 
-/**
- * @param {*} value - Anything.
- * @return {*} - Given `value`.
- */
 function returner(value) {
   return value;
 }
 
-},{}],108:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:blockquote
- * @fileoverview Stringify a blockquote.
- */
-
+},{}],95:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = blockquote;
 
-/**
- * Stringify a blockquote.
- *
- * @param {Object} node - `blockquote` node.
- * @return {string} - Markdown blockquote.
- */
 function blockquote(node) {
   var values = this.block(node).split('\n');
   var result = [];
@@ -12815,61 +10061,29 @@ function blockquote(node) {
   return '>' + result.join('\n>');
 }
 
-},{}],109:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:break
- * @fileoverview Stringify a break.
- */
-
+},{}],96:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = lineBreak;
 
-/* Constants. */
 var map = {true: '\\\n', false: '  \n'};
 
-/**
- * Stringify a hard break.
- *
- * In Commonmark mode, trailing backslash form is used in order
- * to preserve trailing whitespace that the line may end with,
- * and also for better visibility.
- *
- * @return {string} - Markdown break.
- */
 function lineBreak() {
   return map[this.options.commonmark];
 }
 
-},{}],110:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:code
- * @fileoverview Stringify code.
- */
-
+},{}],97:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var streak = require('longest-streak');
 var repeat = require('repeat-string');
 var pad = require('../util/pad');
 
-/* Expose. */
 module.exports = code;
 
-/* Constants. */
 var FENCE = /([`~])\1{2}/;
 
-/**
- * Stringify code.
- *
+/* Stringify code.
  * Creates indented code when:
  *
  * - No language tag exists;
@@ -12896,13 +10110,6 @@ var FENCE = /([`~])\1{2}/;
  *     foo
  *     ```
  *     ````
- *
- * Supports named entities in the language flag with
- * `settings.encode` mode.
- *
- * @param {Object} node - `code` node.
- * @param {Object} parent - Parent of `node`.
- * @return {string} - Markdown code.
  */
 function code(node, parent) {
   var self = this;
@@ -12922,10 +10129,7 @@ function code(node, parent) {
       options.listItemIndent !== 'tab' &&
       options.pedantic
     ) {
-      self.file.fail(
-        'Cannot indent code properly. See http://git.io/vgFvT',
-        node.position
-      );
+      self.file.fail('Cannot indent code properly. See http://git.io/vgFvT', node.position);
     }
 
     return pad(value, 1);
@@ -12947,34 +10151,20 @@ function code(node, parent) {
   return fence + language + '\n' + value + '\n' + fence;
 }
 
-},{"../util/pad":106,"longest-streak":28,"repeat-string":135}],111:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:definition
- * @fileoverview Stringify a definition.
- */
-
+},{"../util/pad":93,"longest-streak":21,"repeat-string":121}],98:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var uri = require('../util/enclose-uri');
 var title = require('../util/enclose-title');
 
-/* Expose. */
 module.exports = definition;
 
-/**
- * Stringify an URL definition.
+/* Stringify an URL definition.
  *
  * Is smart about enclosing `url` (see `encloseURI()`) and
  * `title` (see `encloseTitle()`).
  *
  *    [foo]: <foo at bar dot com> 'An "example" e-mail'
- *
- * @param {Object} node - `definition` node.
- * @return {string} - Markdown definition.
  */
 function definition(node) {
   var content = uri(node.url);
@@ -12986,84 +10176,40 @@ function definition(node) {
   return '[' + node.identifier + ']: ' + content;
 }
 
-},{"../util/enclose-title":101,"../util/enclose-uri":102}],112:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:delete
- * @fileoverview Stringify a delete.
- */
-
+},{"../util/enclose-title":88,"../util/enclose-uri":89}],99:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = strikethrough;
 
-/**
- * Stringify a `delete`.
- *
- * @param {Object} node - `delete` node.
- * @return {string} - Markdown strikethrough.
- */
 function strikethrough(node) {
   return '~~' + this.all(node).join('') + '~~';
 }
 
-},{}],113:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:emphasis
- * @fileoverview Stringify a emphasis.
- */
-
+},{}],100:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = emphasis;
 
-/**
- * Stringify a `emphasis`.
+/* Stringify an `emphasis`.
  *
  * The marker used is configurable through `emphasis`, which
  * defaults to an underscore (`'_'`) but also accepts an
  * asterisk (`'*'`):
  *
  *     *foo*
- *
- * @param {Object} node - `emphasis` node.
- * @return {string} - Markdown emphasis.
  */
 function emphasis(node) {
   var marker = this.options.emphasis;
   return marker + this.all(node).join('') + marker;
 }
 
-},{}],114:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:footnote-definition
- * @fileoverview Stringify a footnote-definition.
- */
-
+},{}],101:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var repeat = require('repeat-string');
 
-/* Expose. */
 module.exports = footnoteDefinition;
 
-/**
- * Stringify a footnote definition.
- *
- * @param {Object} node - `footnoteDefinition` node.
- * @return {string} - Markdown footnote definition.
- */
 function footnoteDefinition(node) {
   var id = node.identifier.toLowerCase();
   var content = this.all(node).join('\n\n' + repeat(' ', 4));
@@ -13071,73 +10217,32 @@ function footnoteDefinition(node) {
   return '[^' + id + ']: ' + content;
 }
 
-},{"repeat-string":135}],115:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:footnote-reference
- * @fileoverview Stringify a footnote reference.
- */
-
+},{"repeat-string":121}],102:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = footnoteReference;
 
-/**
- * Stringify a footnote reference.
- *
- * @param {Object} node - `footnoteReference` node.
- * @return {string} - Markdown footnote reference.
- */
 function footnoteReference(node) {
   return '[^' + node.identifier + ']';
 }
 
-},{}],116:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:footnote
- * @fileoverview Stringify a footnote.
- */
-
+},{}],103:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = footnote;
 
-/**
- * Stringify a footnote.
- *
- * @param {Object} node - `footnote` node.
- * @return {string} - Markdown footnote.
- */
 function footnote(node) {
   return '[^' + this.all(node).join('') + ']';
 }
 
-},{}],117:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:heading
- * @fileoverview Stringify a heading.
- */
-
+},{}],104:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var repeat = require('repeat-string');
 
-/* Expose. */
 module.exports = heading;
 
-/**
- * Stringify heading.
+/* Stringify a heading.
  *
  * In `setext: true` mode and when `depth` is smaller than
  * three, creates a setext header:
@@ -13153,9 +10258,6 @@ module.exports = heading;
  * hashes:
  *
  *     ### Foo ###
- *
- * @param {Object} node - `heading` node.
- * @return {string} - Markdown heading.
  */
 function heading(node) {
   var self = this;
@@ -13174,77 +10276,35 @@ function heading(node) {
   return prefix + ' ' + content + (closeAtx ? ' ' + prefix : '');
 }
 
-},{"repeat-string":135}],118:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:html
- * @fileoverview Stringify html.
- */
-
+},{"repeat-string":121}],105:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = html;
 
-/**
- * Stringify html.
- *
- * @param {Object} node - `html` node.
- * @return {string} - html.
- */
 function html(node) {
   return node.value;
 }
 
-},{}],119:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:image-reference
- * @fileoverview Stringify an image reference.
- */
-
+},{}],106:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var label = require('../util/label');
 
-/* Expose. */
 module.exports = imageReference;
 
-/**
- * Stringify an image reference.
- *
- * @param {Object} node - `imageReference` node.
- * @return {string} - Markdown image reference.
- */
 function imageReference(node) {
   return '![' + (this.encode(node.alt, node) || '') + ']' + label(node);
 }
 
-},{"../util/label":105}],120:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:image
- * @fileoverview Stringify an image.
- */
-
+},{"../util/label":92}],107:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var uri = require('../util/enclose-uri');
 var title = require('../util/enclose-title');
 
-/* Expose. */
 module.exports = image;
 
-/**
- * Stringify an image.
+/* Stringify an image.
  *
  * Is smart about enclosing `url` (see `encloseURI()`) and
  * `title` (see `encloseTitle()`).
@@ -13253,9 +10313,6 @@ module.exports = image;
  *
  * Supports named entities in `url`, `alt`, and `title`
  * when in `settings.encode` mode.
- *
- * @param {Object} node - `image` node.
- * @return {string} - Markdown image.
  */
 function image(node) {
   var self = this;
@@ -13272,26 +10329,15 @@ function image(node) {
   return '![' + alt + '](' + content + ')';
 }
 
-},{"../util/enclose-title":101,"../util/enclose-uri":102}],121:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:inline-code
- * @fileoverview Stringify inline code.
- */
-
+},{"../util/enclose-title":88,"../util/enclose-uri":89}],108:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var streak = require('longest-streak');
 var repeat = require('repeat-string');
 
-/* Expose. */
 module.exports = inlineCode;
 
-/**
- * Stringify inline code.
+/* Stringify inline code.
  *
  * Knows about internal ticks (`\``), and ensures one more
  * tick is used to enclose the inline code:
@@ -13302,9 +10348,6 @@ module.exports = inlineCode;
  *
  *     `` `foo ``
  *     `` foo` ``
- *
- * @param {Object} node - `inlineCode` node.
- * @return {string} - Markdown inline code.
  */
 function inlineCode(node) {
   var value = node.value;
@@ -13323,30 +10366,14 @@ function inlineCode(node) {
   return start + value + end;
 }
 
-},{"longest-streak":28,"repeat-string":135}],122:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:link-reference
- * @fileoverview Stringify a link reference.
- */
-
+},{"longest-streak":21,"repeat-string":121}],109:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var copy = require('../util/copy-identifier-encoding');
 var label = require('../util/label');
 
-/* Expose. */
 module.exports = linkReference;
 
-/**
- * Stringify a link reference.
- *
- * @param {Object} node - `linkReference` node.
- * @return {string} - Markdown link reference.
- */
 function linkReference(node) {
   var self = this;
   var type = node.referenceType;
@@ -13362,30 +10389,19 @@ function linkReference(node) {
   return '[' + value + ']' + label(node);
 }
 
-},{"../util/copy-identifier-encoding":100,"../util/label":105}],123:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:link
- * @fileoverview Stringify a link.
- */
-
+},{"../util/copy-identifier-encoding":87,"../util/label":92}],110:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var uri = require('../util/enclose-uri');
 var title = require('../util/enclose-title');
 
-/* Expose. */
 module.exports = link;
 
 /* Expression for a protocol:
  * http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax */
 var PROTOCOL = /^[a-z][a-z+.-]+:\/?/i;
 
-/**
- * Stringify a link.
+/* Stringify a link.
  *
  * When no title exists, the compiled `children` equal
  * `url`, and `url` starts with a protocol, an auto
@@ -13399,11 +10415,7 @@ var PROTOCOL = /^[a-z][a-z+.-]+:\/?/i;
  *    [foo](<foo at bar dot com> 'An "example" e-mail')
  *
  * Supports named entities in the `url` and `title` when
- * in `settings.encode` mode.
- *
- * @param {Object} node - `link` node.
- * @return {string} - Markdown link.
- */
+ * in `settings.encode` mode. */
 function link(node) {
   var self = this;
   var content = self.encode(node.url || '', node);
@@ -13432,33 +10444,23 @@ function link(node) {
   return '[' + value + '](' + content + ')';
 }
 
-},{"../util/enclose-title":101,"../util/enclose-uri":102}],124:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:list-item
- * @fileoverview Stringify a list item.
- */
-
+},{"../util/enclose-title":88,"../util/enclose-uri":89}],111:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var repeat = require('repeat-string');
 var pad = require('../util/pad');
 
-/* Expose. */
 module.exports = listItem;
 
 /* Which checkbox to use. */
-var CHECKBOX_MAP = {};
+var CHECKBOX_MAP = {
+  undefined: '',
+  null: '',
+  true: '[x] ',
+  false: '[ ] '
+};
 
-CHECKBOX_MAP.undefined = CHECKBOX_MAP.null = '';
-CHECKBOX_MAP.true = '[x] ';
-CHECKBOX_MAP.false = '[ ] ';
-
-/**
- * Stringify a list item.
+/* Stringify a list item.
  *
  * Prefixes the content with a checked checkbox when
  * `checked: true`:
@@ -13469,13 +10471,6 @@ CHECKBOX_MAP.false = '[ ] ';
  * `checked: false`:
  *
  *     [ ] foo
- *
- * @param {Object} node - `listItem` node.
- * @param {Object} parent - `list` node.
- * @param {number} position - Index of `node` in `parent`.
- * @param {string} bullet - Bullet to use.  This, and the
- *   `listItemIndent` setting define the used indent.
- * @return {string} - Markdown list item.
  */
 function listItem(node, parent, position, bullet) {
   var self = this;
@@ -13512,18 +10507,9 @@ function listItem(node, parent, position, bullet) {
   return value;
 }
 
-},{"../util/pad":106,"repeat-string":135}],125:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:list
- * @fileoverview Stringify a list.
- */
-
+},{"../util/pad":93,"repeat-string":121}],112:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = list;
 
 /* Which method to use based on `list.ordered`. */
@@ -13532,144 +10518,67 @@ var ORDERED_MAP = {
   false: 'visitUnorderedItems'
 };
 
-/**
- * Stringify a list. See `Compiler#visitOrderedList()` and
- * `Compiler#visitUnorderedList()` for internal working.
- *
- * @param {Object} node - `list` node.
- * @return {string} - Markdown list.
- */
 function list(node) {
   return this[ORDERED_MAP[node.ordered]](node);
 }
 
-},{}],126:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:paragraph
- * @fileoverview Stringify a paragraph.
- */
-
+},{}],113:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = paragraph;
 
-/**
- * Stringify a paragraph.
- *
- * @param {Object} node - `paragraph` node.
- * @return {string} - Markdown paragraph.
- */
 function paragraph(node) {
   return this.all(node).join('');
 }
 
-},{}],127:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:root
- * @fileoverview Stringify a root.
- */
-
+},{}],114:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = root;
 
-/**
- * Stringify a root.
- *
- * Adds a final newline to ensure valid POSIX files.
- *
- * @param {Object} node - `root` node.
- * @return {string} - Document.
- */
+/* Stringify a root.
+ * Adds a final newline to ensure valid POSIX files. */
 function root(node) {
   return this.block(node) + '\n';
 }
 
-},{}],128:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:strong
- * @fileoverview Stringify a strong.
- */
-
+},{}],115:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var repeat = require('repeat-string');
 
-/* Expose. */
 module.exports = strong;
 
-/**
- * Stringify a `strong`.
+/* Stringify a `strong`.
  *
  * The marker used is configurable by `strong`, which
  * defaults to an asterisk (`'*'`) but also accepts an
  * underscore (`'_'`):
  *
  *     __foo__
- *
- * @param {Object} node - `strong` node.
- * @return {string} - Markdown strong.
  */
 function strong(node) {
   var marker = repeat(this.options.strong, 2);
   return marker + this.all(node).join('') + marker;
 }
 
-},{"repeat-string":135}],129:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:table-cell
- * @fileoverview Stringify a table-cell.
- */
-
+},{"repeat-string":121}],116:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = tableCell;
 
-/**
- * Stringify a table cell.
- *
- * @param {Object} node - `tableCell` node.
- * @return {string} - Markdown table cell.
- */
 function tableCell(node) {
   return this.all(node).join('');
 }
 
-},{}],130:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:table
- * @fileoverview Stringify a table.
- */
-
+},{}],117:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var markdownTable = require('markdown-table');
 
-/* Expose. */
 module.exports = table;
 
-/**
- * Stringify table.
+/* Stringify table.
  *
  * Creates a fenced table by default, but not in
  * `looseTable: true` mode:
@@ -13688,14 +10597,14 @@ module.exports = table;
  *     |Foo|Bar|
  *     |:-:|---|
  *     |Baz|Qux|
- *
- * @param {Object} node - `table` node.
- * @return {string} - Markdown table.
  */
 function table(node) {
   var self = this;
-  var loose = self.options.looseTable;
-  var spaced = self.options.spacedTable;
+  var options = self.options;
+  var loose = options.looseTable;
+  var spaced = options.spacedTable;
+  var pad = options.paddedTable;
+  var stringLength = options.stringLength;
   var rows = node.children;
   var index = rows.length;
   var exit = self.enterTable();
@@ -13710,39 +10619,32 @@ function table(node) {
   exit();
 
   if (loose) {
-    start = end = '';
+    start = '';
+    end = '';
   } else if (spaced) {
     start = '| ';
     end = ' |';
   } else {
-    start = end = '|';
+    start = '|';
+    end = '|';
   }
 
   return markdownTable(result, {
     align: node.align,
+    pad: pad,
     start: start,
     end: end,
+    stringLength: stringLength,
     delimiter: spaced ? ' | ' : '|'
   });
 }
 
-},{"markdown-table":30}],131:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:text
- * @fileoverview Stringify a text.
- */
-
+},{"markdown-table":23}],118:[function(require,module,exports){
 'use strict';
 
-/* Expose. */
 module.exports = text;
 
-/**
- * Stringify text.
- *
+/* Stringify text.
  * Supports named entities in `settings.encode: true` mode:
  *
  *     AT&amp;T
@@ -13751,35 +10653,19 @@ module.exports = text;
  * mode:
  *
  *     AT&#x26;T
- *
- * @param {Object} node - `text` node.
- * @param {Object?} [parent] - Parent of `node`.
- * @return {string} - Markdown text.
  */
 function text(node, parent) {
   return this.encode(this.escape(node.value, node, parent), node);
 }
 
-},{}],132:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:thematic-break
- * @fileoverview Stringify a thematic-break.
- */
-
+},{}],119:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
 var repeat = require('repeat-string');
 
-/* Expose. */
 module.exports = thematic;
 
-/**
- * Stringify a `thematic-break`.
- *
+/* Stringify a `thematic-break`.
  * The character used is configurable through `rule`: (`'_'`)
  *
  *     ___
@@ -13793,8 +10679,6 @@ module.exports = thematic;
  * through `ruleSpaces`: (`true`)
  *
  *     * * *
- *
- * @return {string} - Markdown thematic break.
  */
 function thematic() {
   var options = this.options;
@@ -13802,54 +10686,16 @@ function thematic() {
   return options.ruleSpaces ? rule.split('').join(' ') : rule;
 }
 
-},{"repeat-string":135}],133:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark:stringify:visitors:yaml
- * @fileoverview Stringify yaml.
- */
-
+},{"repeat-string":121}],120:[function(require,module,exports){
 'use strict';
 
-/* Dependencies. */
-var repeat = require('repeat-string');
-
-/* Expose. */
-module.exports = yaml;
-
-/**
- * Stringify `yaml`.
- *
- * @param {Object} node - `yaml` node.
- * @return {string} - Markdown yaml.
- */
-function yaml(node) {
-  var marker = repeat('-', 3);
-  return marker + (node.value ? '\n' + node.value : '') + '\n' + marker;
-}
-
-},{"repeat-string":135}],134:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module remark
- * @fileoverview Markdown processor powered by plugins.
- */
-
-'use strict';
-
-/* Dependencies. */
 var unified = require('unified');
 var parse = require('remark-parse');
 var stringify = require('remark-stringify');
 
-/* Expose. */
-module.exports = unified().use(parse).use(stringify).abstract();
+module.exports = unified().use(parse).use(stringify).freeze();
 
-},{"remark-parse":36,"remark-stringify":89,"unified":145}],135:[function(require,module,exports){
+},{"remark-parse":28,"remark-stringify":76,"unified":131}],121:[function(require,module,exports){
 /*!
  * repeat-string <https://github.com/jonschlinkert/repeat-string>
  *
@@ -13921,7 +10767,7 @@ function repeat(str, num) {
   return res;
 }
 
-},{}],136:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 'use strict';
 
 var path = require('path');
@@ -13941,7 +10787,7 @@ function replaceExt(npath, ext) {
 
 module.exports = replaceExt;
 
-},{"path":34}],137:[function(require,module,exports){
+},{"path":26}],123:[function(require,module,exports){
 /**
  * @author Titus Wormer
  * @copyright 2016 Titus Wormer
@@ -13988,40 +10834,39 @@ function factory(key, state, ctx) {
   };
 }
 
-},{}],138:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module stringify-entities
- * @fileoverview Encode HTML character references and character entities.
- */
+},{}],124:[function(require,module,exports){
+module.exports=[
+  "cent",
+  "copy",
+  "divide",
+  "gt",
+  "lt",
+  "not",
+  "para",
+  "times"
+]
 
+},{}],125:[function(require,module,exports){
 'use strict';
 
-/* eslint-env commonjs */
-
-/* Dependencies. */
 var entities = require('character-entities-html4');
 var legacy = require('character-entities-legacy');
-var dangerous = require('./lib/dangerous.json');
+var hexadecimal = require('is-hexadecimal');
+var alphanumerical = require('is-alphanumerical');
+var dangerous = require('./dangerous.json');
 
-/* Methods. */
-var has = {}.hasOwnProperty;
+/* Expose. */
+module.exports = encode;
+
+encode.escape = escape;
+
+var own = {}.hasOwnProperty;
 
 /* List of enforced escapes. */
 var escapes = ['"', '\'', '<', '>', '&', '`'];
 
 /* Map of characters to names. */
-var characters = {};
-
-(function () {
-  var name;
-
-  for (name in entities) {
-    characters[entities[name]] = name;
-  }
-})();
+var characters = construct();
 
 /* Default escapes. */
 var EXPRESSION_ESCAPE = toExpression(escapes);
@@ -14030,145 +10875,10 @@ var EXPRESSION_ESCAPE = toExpression(escapes);
 var EXPRESSION_SURROGATE_PAIR = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
 
 /* Non-ASCII characters. */
+// eslint-disable-next-line no-control-regex
 var EXPRESSION_BMP = /[\x01-\t\x0B\f\x0E-\x1F\x7F\x81\x8D\x8F\x90\x9D\xA0-\uFFFF]/g;
 
-/**
- * Get the first character in `char`.
- *
- * @param {string} char - Value.
- * @return {string} - First character.
- */
-function charCode(char) {
-  return char.charCodeAt(0);
-}
-
-/**
- * Check whether `char` is an alphanumeric.
- *
- * @param {string} char - Value.
- * @return {boolean} - Whether `char` is an
- *   alphanumeric.
- */
-function isAlphanumeric(char) {
-  var code = charCode(char);
-
-  return (code >= 48 /* 0 */ && code <= 57 /* 9 */) ||
-    (code >= 65 /* A */ && code <= 90 /* Z */) ||
-    (code >= 97 /* a */ && code <= 122 /* z */);
-}
-
-/**
- * Check whether `char` is a hexadecimal.
- *
- * @param {string} char - Value.
- * @return {boolean} - Whether `char` is a
- *   hexadecimal.
- */
-function isHexadecimal(char) {
-  var code = charCode(char);
-
-  return (code >= 48 /* 0 */ && code <= 57 /* 9 */) ||
-    (code >= 65 /* A */ && code <= 70 /* F */) ||
-    (code >= 97 /* a */ && code <= 102 /* f */);
-}
-
-/**
- * Transform `code` into a hexadecimal character reference.
- *
- * @param {number} code - Number to encode.
- * @param {string?} [next] - Next character.
- * @param {boolean?} [omit] - Omit optional semi-colons.
- * @return {string} - `code` encoded as hexadecimal.
- */
-function toHexReference(code, next, omit) {
-  var value = '&#x' + code.toString(16).toUpperCase();
-
-  return omit && next && !isHexadecimal(next) ? value : value + ';';
-}
-
-/**
- * Transform `code` into an entity.
- *
- * @param {string} name - Name to wrap.
- * @param {string?} [next] - Next character.
- * @param {boolean?} [omit] - Omit optional semi-colons.
- * @param {boolean?} [attribute] - Stringify as attribute.
- * @return {string} - `name` encoded as hexadecimal.
- */
-function toNamed(name, next, omit, attribute) {
-  var value = '&' + name;
-
-  if (
-    omit &&
-    has.call(legacy, name) &&
-    dangerous.indexOf(name) === -1 &&
-    (!attribute || (next && next !== '=' && !isAlphanumeric(next)))
-  ) {
-    return value;
-  }
-
-  return value + ';';
-}
-
-/**
- * Create an expression for `characters`.
- *
- * @param {Array.<string>} characters - Characters.
- * @return {RegExp} - Expression.
- */
-function toExpression(characters) {
-  return new RegExp('[' + characters.join('') + ']', 'g');
-}
-
-/**
- * Encode `char` according to `options`.
- *
- * @param {string} char - Character to encode.
- * @param {string} next - Character following `char`.
- * @param {Object} options - Configuration.
- * @return {string} - Entity.
- */
-function one(char, next, options) {
-  var shortest = options.useShortestReferences;
-  var omit = options.omitOptionalSemicolons;
-  var named;
-  var numeric;
-
-  if (
-    (shortest || options.useNamedReferences) &&
-    has.call(characters, char)
-  ) {
-    named = toNamed(characters[char], next, omit, options.attribute);
-  }
-
-  if (shortest || !named) {
-    numeric = toHexReference(charCode(char), next, omit);
-  }
-
-  if (named && (!shortest || named.length < numeric.length)) {
-    return named;
-  }
-
-  return numeric;
-}
-
-/**
- * Encode special characters in `value`.
- *
- * @param {string} value - Value to encode.
- * @param {Object?} [options] - Configuration.
- * @param {boolean?} [options.escapeOnly=false]
- *   - Whether to only escape required characters.
- * @param {Array.<string>} [options.subset=[]]
- *   - Subset of characters to encode.
- * @param {boolean?} [options.useNamedReferences=false]
- *   - Whether to use entities where possible.
- * @param {boolean?} [options.omitOptionalSemicolons=false]
- *   - Whether to omit optional semi-colons.
- * @param {boolean?} [options.attribute=false]
- *   - Whether to stringifying and attribute.
- * @return {string} - Encoded `value`.
- */
+/* Encode special characters in `value`. */
 function encode(value, options) {
   var settings = options || {};
   var subset = settings.subset;
@@ -14198,12 +10908,7 @@ function encode(value, options) {
     });
 }
 
-/**
- * Shortcut to escape special characters in HTML.
- *
- * @param {string} value - Value to encode.
- * @return {string} - Encoded `value`.
- */
+/* Shortcut to escape special characters in HTML. */
 function escape(value) {
   return encode(value, {
     escapeOnly: true,
@@ -14211,36 +10916,73 @@ function escape(value) {
   });
 }
 
-encode.escape = escape;
+/* Encode `char` according to `options`. */
+function one(char, next, options) {
+  var shortest = options.useShortestReferences;
+  var omit = options.omitOptionalSemicolons;
+  var named;
+  var numeric;
 
-/* Expose. */
-module.exports = encode;
+  if (
+    (shortest || options.useNamedReferences) &&
+    own.call(characters, char)
+  ) {
+    named = toNamed(characters[char], next, omit, options.attribute);
+  }
 
-},{"./lib/dangerous.json":139,"character-entities-html4":6,"character-entities-legacy":8}],139:[function(require,module,exports){
-module.exports=[
-  "cent",
-  "copy",
-  "divide",
-  "gt",
-  "lt",
-  "not",
-  "para",
-  "times"
-]
+  if (shortest || !named) {
+    numeric = toHexReference(char.charCodeAt(0), next, omit);
+  }
 
-},{}],140:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module strip-markdown
- * @fileoverview Remove markdown formatting.
- */
+  if (named && (!shortest || named.length < numeric.length)) {
+    return named;
+  }
 
-/* Expose `strip`. */
+  return numeric;
+}
+
+/* Transform `code` into an entity. */
+function toNamed(name, next, omit, attribute) {
+  var value = '&' + name;
+
+  if (
+    omit &&
+    own.call(legacy, name) &&
+    dangerous.indexOf(name) === -1 &&
+    (!attribute || (next && next !== '=' && !alphanumerical(next)))
+  ) {
+    return value;
+  }
+
+  return value + ';';
+}
+
+/* Transform `code` into a hexadecimal character reference. */
+function toHexReference(code, next, omit) {
+  var value = '&#x' + code.toString(16).toUpperCase();
+  return omit && next && !hexadecimal(next) ? value : value + ';';
+}
+
+/* Create an expression for `characters`. */
+function toExpression(characters) {
+  return new RegExp('[' + characters.join('') + ']', 'g');
+}
+
+/* Construct the map. */
+function construct() {
+  var chars = {};
+  var name;
+
+  for (name in entities) {
+    chars[entities[name]] = name;
+  }
+
+  return chars;
+}
+
+},{"./dangerous.json":124,"character-entities-html4":5,"character-entities-legacy":6,"is-alphanumerical":14,"is-hexadecimal":17}],126:[function(require,module,exports){
 module.exports = strip;
 
-/* Attacher. */
 function strip() {
   return one;
 }
@@ -14251,15 +10993,29 @@ function strip() {
 var map = {};
 
 map.heading = paragraph;
-map.text = map.inlineCode = text;
-map.image = map.imageReference = image;
+map.text = text;
+map.inlineCode = text;
+map.image = image;
+map.imageReference = image;
 map.break = lineBreak;
 
-map.blockquote = map.list = map.listItem = map.strong =
-  map.emphasis = map.delete = map.link = map.linkReference = children;
+map.blockquote = children;
+map.list = children;
+map.listItem = children;
+map.strong = children;
+map.emphasis = children;
+map.delete = children;
+map.link = children;
+map.linkReference = children;
 
-map.code = map.horizontalRule = map.thematicBreak = map.html =
-  map.table = map.tableCell = map.definition = map.yaml = empty;
+map.code = empty;
+map.horizontalRule = empty;
+map.thematicBreak = empty;
+map.html = empty;
+map.table = empty;
+map.tableCell = empty;
+map.definition = empty;
+map.yaml = empty;
 
 /* One node. */
 function one(node) {
@@ -14269,7 +11025,7 @@ function one(node) {
     node = map[type](node);
   }
 
-  if (node.length) {
+  if ('length' in node) {
     node = all(node);
   }
 
@@ -14300,12 +11056,7 @@ function all(nodes) {
   return clean(result);
 }
 
-/**
- * Clean nodes: merges text's.
- *
- * @param {Array.<Node>} values
- * @return {Array.<Node>}
- */
+/* Clean nodes: merges text's. */
 function clean(values) {
   var index = -1;
   var length = values.length;
@@ -14360,45 +11111,24 @@ function empty() {
   return {type: 'text', value: ''};
 }
 
-},{}],141:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 'use strict';
-
-/*
- * Constants.
- */
-
-var LINE = '\n';
-
-/**
- * Remove final newline characters from `value`.
- *
- * @example
- *   trimTrailingLines('foo\nbar'); // 'foo\nbar'
- *   trimTrailingLines('foo\nbar\n'); // 'foo\nbar'
- *   trimTrailingLines('foo\nbar\n\n'); // 'foo\nbar'
- *
- * @param {string} value - Value with trailing newlines,
- *   coerced to string.
- * @return {string} - Value without trailing newlines.
- */
-function trimTrailingLines(value) {
-    var index;
-
-    value = String(value);
-    index = value.length;
-
-    while (value.charAt(--index) === LINE) { /* empty */ }
-
-    return value.slice(0, index + 1);
-}
-
-/*
- * Expose.
- */
 
 module.exports = trimTrailingLines;
 
-},{}],142:[function(require,module,exports){
+var line = '\n';
+
+/* Remove final newline characters from `value`. */
+function trimTrailingLines(value) {
+  var val = String(value);
+  var index = val.length;
+
+  while (val.charAt(--index) === line) { /* empty */ }
+
+  return val.slice(0, index + 1);
+}
+
+},{}],128:[function(require,module,exports){
 
 exports = module.exports = trim;
 
@@ -14414,17 +11144,7 @@ exports.right = function(str){
   return str.replace(/\s*$/, '');
 };
 
-},{}],143:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2016 Titus Wormer
- * @license MIT
- * @module trough
- * @fileoverview Middleware.  Inspired by `segmentio/ware`,
- *   but able to change the values from transformer to
- *   transformer.
- */
-
+},{}],129:[function(require,module,exports){
 'use strict';
 
 /* Expose. */
@@ -14433,11 +11153,7 @@ module.exports = trough;
 /* Methods. */
 var slice = [].slice;
 
-/**
- * Create new middleware.
- *
- * @return {Object} - Middlewre.
- */
+/* Create new middleware. */
 function trough() {
   var fns = [];
   var middleware = {};
@@ -14447,12 +11163,8 @@ function trough() {
 
   return middleware;
 
-  /**
-   * Run `fns`.  Last argument must be
-   * a completion handler.
-   *
-   * @param {...*} input - Parameters
-   */
+  /* Run `fns`.  Last argument must be
+   * a completion handler. */
   function run() {
     var index = -1;
     var input = slice.call(arguments, 0, -1);
@@ -14464,14 +11176,7 @@ function trough() {
 
     next.apply(null, [null].concat(input));
 
-    return;
-
-    /**
-     * Run the next `fn`, if any.
-     *
-     * @param {Error?} err - Failure.
-     * @param {...*} values - Other input.
-     */
+    /* Run the next `fn`, if any. */
     function next(err) {
       var fn = fns[++index];
       var params = slice.call(arguments, 0);
@@ -14502,11 +11207,7 @@ function trough() {
     }
   }
 
-  /**
-   * Add `fn` to the list.
-   *
-   * @param {Function} fn - Anything `wrap` accepts.
-   */
+  /* Add `fn` to the list. */
   function use(fn) {
     if (typeof fn !== 'function') {
       throw new Error('Expected `fn` to be a function, not ' + fn);
@@ -14518,15 +11219,9 @@ function trough() {
   }
 }
 
-/**
- * Wrap `fn`.  Can be sync or async; return a promise,
+/* Wrap `fn`.  Can be sync or async; return a promise,
  * receive a completion handler, return new values and
- * errors.
- *
- * @param {Function} fn - Thing to wrap.
- * @param {Function} next - Completion handler.
- * @return {Function} - Wrapped `fn`.
- */
+ * errors. */
 function wrap(fn, next) {
   var invoked;
 
@@ -14568,11 +11263,7 @@ function wrap(fn, next) {
     }
   }
 
-  /**
-   * Invoke `next`, only once.
-   *
-   * @param {Error?} err - Optional error.
-   */
+  /* Invoke `next`, only once. */
   function done() {
     if (!invoked) {
       invoked = true;
@@ -14581,18 +11272,14 @@ function wrap(fn, next) {
     }
   }
 
-  /**
-   * Invoke `done` with one value.
-   * Tracks if an error is passed, too.
-   *
-   * @param {*} value - Optional value.
-   */
+  /* Invoke `done` with one value.
+   * Tracks if an error is passed, too. */
   function then(value) {
     done(null, value);
   }
 }
 
-},{}],144:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 /**
  * @author Titus Wormer
  * @copyright 2015 Titus Wormer
@@ -14661,116 +11348,80 @@ function unherit(Super) {
   }
 }
 
-},{"inherits":19,"xtend":154}],145:[function(require,module,exports){
-(function (global){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module unified
- * @fileoverview Pluggable text processing interface.
- */
-
+},{"inherits":11,"xtend":140}],131:[function(require,module,exports){
 'use strict';
 
 /* Dependencies. */
-var events = require('events');
-var has = require('has');
-var once = require('once');
 var extend = require('extend');
 var bail = require('bail');
 var vfile = require('vfile');
 var trough = require('trough');
-var buffer = require('is-buffer');
 var string = require('x-is-string');
+var func = require('x-is-function');
+var plain = require('is-plain-obj');
 
-/* Expose an abstract processor. */
-module.exports = unified().abstract();
+/* Expose a frozen processor. */
+module.exports = unified().freeze();
 
-/* Methods. */
 var slice = [].slice;
+var own = {}.hasOwnProperty;
 
 /* Process pipeline. */
-var pipeline = trough()
-  .use(function (p, ctx) {
-    ctx.tree = p.parse(ctx.file, ctx.options);
-  })
-  .use(function (p, ctx, next) {
-    p.run(ctx.tree, ctx.file, function (err, tree, file) {
-      if (err) {
-        next(err);
-      } else {
-        ctx.tree = tree;
-        ctx.file = file;
-        next();
-      }
-    });
-  })
-  .use(function (p, ctx) {
-    ctx.file.contents = p.stringify(ctx.tree, ctx.file, ctx.options);
-  });
+var pipeline = trough().use(pipelineParse).use(pipelineRun).use(pipelineStringify);
 
-/**
- * Function to create the first processor.
- *
- * @return {Function} - First processor.
- */
+function pipelineParse(p, ctx) {
+  ctx.tree = p.parse(ctx.file);
+}
+
+function pipelineRun(p, ctx, next) {
+  p.run(ctx.tree, ctx.file, done);
+
+  function done(err, tree, file) {
+    if (err) {
+      next(err);
+    } else {
+      ctx.tree = tree;
+      ctx.file = file;
+      next();
+    }
+  }
+}
+
+function pipelineStringify(p, ctx) {
+  ctx.file.contents = p.stringify(ctx.tree, ctx.file);
+}
+
+/* Function to create the first processor. */
 function unified() {
   var attachers = [];
   var transformers = trough();
   var namespace = {};
-  var chunks = [];
-  var emitter = new events.EventEmitter();
-  var ended = false;
-  var concrete = true;
-  var settings;
-  var key;
-
-  /* Mix in methods. */
-  for (key in emitter) {
-    processor[key] = emitter[key];
-  }
-
-  /* Throw as early as possible.
-   * As events are triggered synchroneously, the stack
-   * is preserved. */
-  processor.on('pipe', function () {
-    assertConcrete();
-  });
+  var frozen = false;
+  var freezeIndex = -1;
 
   /* Data management. */
   processor.data = data;
 
   /* Lock. */
-  processor.abstract = abstract;
+  processor.freeze = freeze;
 
   /* Plug-ins. */
   processor.attachers = attachers;
   processor.use = use;
 
-  /* Streaming. */
-  processor.writable = true;
-  processor.readable = true;
-  processor.write = write;
-  processor.end = end;
-  processor.pipe = pipe;
-
   /* API. */
   processor.parse = parse;
   processor.stringify = stringify;
   processor.run = run;
+  processor.runSync = runSync;
   processor.process = process;
+  processor.processSync = processSync;
 
   /* Expose. */
   return processor;
 
-  /**
-   * Create a new processor based on the processor
-   * in the current scope.
-   *
-   * @return {Processor} - New concrete processor based
-   *   on the descendant processor.
-   */
+  /* Create a new processor based on the processor
+   * in the current scope. */
   function processor() {
     var destination = unified();
     var length = attachers.length;
@@ -14785,892 +11436,552 @@ function unified() {
     return destination;
   }
 
-  /* Helpers. */
-
-  /**
-   * Assert a parser is available.
+  /* Freeze: used to signal a processor that has finished
+   * configuration.
    *
-   * @param {string} name - Name of callee.
-   */
-  function assertParser(name) {
-    if (!isParser(processor.Parser)) {
-      throw new Error('Cannot `' + name + '` without `Parser`');
-    }
-  }
-
-  /**
-   * Assert a compiler is available.
-   *
-   * @param {string} name - Name of callee.
-   */
-  function assertCompiler(name) {
-    if (!isCompiler(processor.Compiler)) {
-      throw new Error('Cannot `' + name + '` without `Compiler`');
-    }
-  }
-
-  /**
-   * Assert the processor is concrete.
-   *
-   * @param {string} name - Name of callee.
-   */
-  function assertConcrete(name) {
-    if (!concrete) {
-      throw new Error(
-        'Cannot ' +
-        (name ? 'invoke `' + name + '` on' : 'pipe into') +
-        ' abstract processor.\n' +
-        'To make the processor concrete, invoke it: ' +
-        'use `processor()` instead of `processor`.'
-      );
-    }
-  }
-
-  /**
-   * Assert `node` is a Unist node.
-   *
-   * @param {*} node - Value to check.
-   */
-  function assertNode(node) {
-    if (!isNode(node)) {
-      throw new Error('Expected node, got `' + node + '`');
-    }
-  }
-
-  /**
-   * Assert, if no `done` is given, that `complete` is
-   * `true`.
-   *
-   * @param {string} name - Name of callee.
-   * @param {boolean} complete - Whether an async process
-   *   is complete.
-   * @param {Function?} done - Optional handler of async
-   *   results.
-   */
-  function assertDone(name, complete, done) {
-    if (!complete && !done) {
-      throw new Error(
-        'Expected `done` to be given to `' + name + '` ' +
-        'as async plug-ins are used'
-      );
-    }
-  }
-
-  /**
-   * Abstract: used to signal an abstract processor which
-   * should made concrete before using.
-   *
-   * For example, take unified itself.  It’s abstract.
+   * For example, take unified itself.  It’s frozen.
    * Plug-ins should not be added to it.  Rather, it should
-   * be made concrete (by invoking it) before modifying it.
+   * be extended, by invoking it, before modifying it.
    *
    * In essence, always invoke this when exporting a
-   * processor.
-   *
-   * @return {Processor} - The operated on processor.
-   */
-  function abstract() {
-    concrete = false;
+   * processor. */
+  function freeze() {
+    var values;
+    var plugin;
+    var options;
+    var transformer;
+
+    if (frozen) {
+      return processor;
+    }
+
+    while (++freezeIndex < attachers.length) {
+      values = attachers[freezeIndex];
+      plugin = values[0];
+      options = values[1];
+      transformer = null;
+
+      if (options === false) {
+        continue;
+      }
+
+      if (options === true) {
+        values[1] = undefined;
+      }
+
+      transformer = plugin.apply(processor, values.slice(1));
+
+      if (func(transformer)) {
+        transformers.use(transformer);
+      }
+    }
+
+    frozen = true;
+    freezeIndex = Infinity;
 
     return processor;
   }
 
-  /**
-   * Data management.
-   *
-   * Getter / setter for processor-specific informtion.
-   *
-   * @param {string} key - Key to get or set.
-   * @param {*} value - Value to set.
-   * @return {*} - Either the operator on processor in
-   *   setter mode; or the value stored as `key` in
-   *   getter mode.
-   */
+  /* Data management.
+   * Getter / setter for processor-specific informtion. */
   function data(key, value) {
-    assertConcrete('data');
-
     if (string(key)) {
       /* Set `key`. */
       if (arguments.length === 2) {
+        assertUnfrozen('data', frozen);
+
         namespace[key] = value;
 
         return processor;
       }
 
       /* Get `key`. */
-      return (has(namespace, key) && namespace[key]) || null;
-    }
-
-    /* Get space. */
-    if (!key) {
-      return namespace;
+      return (own.call(namespace, key) && namespace[key]) || null;
     }
 
     /* Set space. */
-    namespace = key;
-
-    return processor;
-  }
-
-  /**
-   * Plug-in management.
-   *
-   * Pass it:
-   * *   an attacher and options,
-   * *   a list of attachers and options for all of them;
-   * *   a tuple of one attacher and options.
-   * *   a matrix: list containing any of the above and
-   *     matrices.
-   * *   a processor: another processor to use all its
-   *     plugins (except parser if there’s already one).
-   *
-   * @param {...*} value - See description.
-   * @return {Processor} - The operated on processor.
-   */
-  function use(value) {
-    var args = slice.call(arguments, 0);
-    var params = args.slice(1);
-    var parser;
-    var index;
-    var length;
-    var transformer;
-    var result;
-
-    assertConcrete('use');
-
-    /* Multiple attachers. */
-    if ('length' in value && !isFunction(value)) {
-      index = -1;
-      length = value.length;
-
-      if (!isFunction(value[0])) {
-        /* Matrix of things. */
-        while (++index < length) {
-          use(value[index]);
-        }
-      } else if (isFunction(value[1])) {
-        /* List of things. */
-        while (++index < length) {
-          use.apply(null, [value[index]].concat(params));
-        }
-      } else {
-        /* Arguments. */
-        use.apply(null, value);
-      }
-
+    if (key) {
+      assertUnfrozen('data', frozen);
+      namespace = key;
       return processor;
     }
 
-    /* Store attacher. */
-    attachers.push(args);
+    /* Get space. */
+    return namespace;
+  }
 
-    /* Use a processor (except its parser if there’s already one.
-     * Note that the processor is stored on `attachers`, making
-     * it possibly mutating in the future, but also ensuring
-     * the parser isn’t overwritten in the future either. */
-    if (isProcessor(value)) {
-      parser = processor.Parser;
-      result = use(value.attachers);
+  /* Plug-in management.
+   *
+   * Pass it:
+   * *   an attacher and options,
+   * *   a preset,
+   * *   a list of presets, attachers, and arguments (list
+   *     of attachers and options). */
+  function use(value) {
+    var settings;
 
-      if (parser) {
-        processor.Parser = parser;
+    assertUnfrozen('use', frozen);
+
+    if (value === null || value === undefined) {
+      /* Empty */
+    } else if (func(value)) {
+      addPlugin.apply(null, arguments);
+    } else if (typeof value === 'object') {
+      if ('length' in value) {
+        addList(value);
+      } else {
+        addPreset(value);
       }
-
-      return result;
+    } else {
+      throw new Error('Expected usable value, not `' + value + '`');
     }
 
-    /* Single attacher. */
-    transformer = value.apply(null, [processor].concat(params));
-
-    if (isFunction(transformer)) {
-      transformers.use(transformer);
+    if (settings) {
+      namespace.settings = extend(namespace.settings || {}, settings);
     }
 
     return processor;
+
+    function addPreset(result) {
+      addList(result.plugins);
+
+      if (result.settings) {
+        settings = extend(settings || {}, result.settings);
+      }
+    }
+
+    function add(value) {
+      if (func(value)) {
+        addPlugin(value);
+      } else if (typeof value === 'object') {
+        if ('length' in value) {
+          addPlugin.apply(null, value);
+        } else {
+          addPreset(value);
+        }
+      } else {
+        throw new Error('Expected usable value, not `' + value + '`');
+      }
+    }
+
+    function addList(plugins) {
+      var length;
+      var index;
+
+      if (plugins === null || plugins === undefined) {
+        /* Empty */
+      } else if (typeof plugins === 'object' && 'length' in plugins) {
+        length = plugins.length;
+        index = -1;
+
+        while (++index < length) {
+          add(plugins[index]);
+        }
+      } else {
+        throw new Error('Expected a list of plugins, not `' + plugins + '`');
+      }
+    }
+
+    function addPlugin(plugin, value) {
+      var entry = find(plugin);
+
+      if (entry) {
+        if (plain(entry[1]) && plain(value)) {
+          value = extend(entry[1], value);
+        }
+
+        entry[1] = value;
+      } else {
+        attachers.push(slice.call(arguments));
+      }
+    }
   }
 
-  /**
-   * Parse a file (in string or VFile representation)
+  function find(plugin) {
+    var length = attachers.length;
+    var index = -1;
+    var entry;
+
+    while (++index < length) {
+      entry = attachers[index];
+
+      if (entry[0] === plugin) {
+        return entry;
+      }
+    }
+  }
+
+  /* Parse a file (in string or VFile representation)
    * into a Unist node using the `Parser` on the
-   * processor.
-   *
-   * @param {VFile?} [file] - File to process.
-   * @param {Object?} [options] - Configuration.
-   * @return {Node} - Unist node.
-   */
-  function parse(file, options) {
-    assertConcrete('parse');
-    assertParser('parse');
+   * processor. */
+  function parse(doc) {
+    var file = vfile(doc);
+    var Parser;
 
-    return new processor.Parser(vfile(file), options, processor).parse();
+    freeze();
+    Parser = processor.Parser;
+    assertParser('parse', Parser);
+
+    if (newable(Parser)) {
+      return new Parser(String(file), file).parse();
+    }
+
+    return Parser(String(file), file); // eslint-disable-line new-cap
   }
 
-  /**
-   * Run transforms on a Unist node representation of a file
-   * (in string or VFile representation).
-   *
-   * @param {Node} node - Unist node.
-   * @param {(string|VFile)?} [file] - File representation.
-   * @param {Function?} [done] - Callback.
-   * @return {Node} - The given or resulting Unist node.
-   */
-  function run(node, file, done) {
+  /* Run transforms on a Unist node representation of a file
+   * (in string or VFile representation), async. */
+  function run(node, file, cb) {
+    assertNode(node);
+    freeze();
+
+    if (!cb && func(file)) {
+      cb = file;
+      file = null;
+    }
+
+    if (!cb) {
+      return new Promise(executor);
+    }
+
+    executor(null, cb);
+
+    function executor(resolve, reject) {
+      transformers.run(node, vfile(file), done);
+
+      function done(err, tree, file) {
+        tree = tree || node;
+        if (err) {
+          reject(err);
+        } else if (resolve) {
+          resolve(tree);
+        } else {
+          cb(null, tree, file);
+        }
+      }
+    }
+  }
+
+  /* Run transforms on a Unist node representation of a file
+   * (in string or VFile representation), sync. */
+  function runSync(node, file) {
     var complete = false;
     var result;
 
-    assertConcrete('run');
-    assertNode(node);
+    run(node, file, done);
 
-    result = node;
-
-    if (!done && isFunction(file)) {
-      done = file;
-      file = null;
-    }
-
-    transformers.run(node, vfile(file), function (err, tree, file) {
-      complete = true;
-      result = tree || node;
-
-      (done || bail)(err, tree, file);
-    });
-
-    assertDone('run', complete, done);
+    assertDone('runSync', 'run', complete);
 
     return result;
+
+    function done(err, tree) {
+      complete = true;
+      bail(err);
+      result = tree;
+    }
   }
 
-  /**
-   * Stringify a Unist node representation of a file
+  /* Stringify a Unist node representation of a file
    * (in string or VFile representation) into a string
-   * using the `Compiler` on the processor.
-   *
-   * @param {Node} node - Unist node.
-   * @param {(string|VFile)?} [file] - File representation.
-   * @param {Object?} [options] - Configuration.
-   * @return {string} - String representation.
-   */
-  function stringify(node, file, options) {
-    assertConcrete('stringify');
-    assertCompiler('stringify');
+   * using the `Compiler` on the processor. */
+  function stringify(node, doc) {
+    var file = vfile(doc);
+    var Compiler;
+
+    freeze();
+    Compiler = processor.Compiler;
+    assertCompiler('stringify', Compiler);
     assertNode(node);
 
-    if (
-      !options &&
-      !string(file) &&
-      !buffer(file) &&
-      !(typeof file === 'object' && 'messages' in file)
-    ) {
-      options = file;
-      file = null;
+    if (newable(Compiler)) {
+      return new Compiler(node, file).compile();
     }
 
-    return new processor.Compiler(vfile(file), options, processor).compile(node);
+    return Compiler(node, file); // eslint-disable-line new-cap
   }
 
-  /**
-   * Parse a file (in string or VFile representation)
+  /* Parse a file (in string or VFile representation)
    * into a Unist node using the `Parser` on the processor,
    * then run transforms on that node, and compile the
    * resulting node using the `Compiler` on the processor,
-   * and store that result on the VFile.
-   *
-   * @param {(string|VFile)?} file - File representation.
-   * @param {Object?} [options] - Configuration.
-   * @param {Function?} [done] - Callback.
-   * @return {VFile} - The given or resulting VFile.
-   */
-  function process(file, options, done) {
-    var complete = false;
+   * and store that result on the VFile. */
+  function process(doc, cb) {
+    freeze();
+    assertParser('process', processor.Parser);
+    assertCompiler('process', processor.Compiler);
 
-    assertConcrete('process');
-    assertParser('process');
-    assertCompiler('process');
-
-    if (!done && isFunction(options)) {
-      done = options;
-      options = null;
+    if (!cb) {
+      return new Promise(executor);
     }
 
-    file = vfile(file);
+    executor(null, cb);
 
-    pipeline.run(processor, {
-      file: file,
-      options: options || {}
-    }, function (err) {
-      complete = true;
+    function executor(resolve, reject) {
+      var file = vfile(doc);
 
-      if (done) {
-        done(err, file);
-      } else {
-        bail(err);
-      }
-    });
+      pipeline.run(processor, {file: file}, done);
 
-    assertDone('process', complete, done);
-
-    return file;
-  }
-
-  /* Streams. */
-
-  /**
-   * Write a chunk into memory.
-   *
-   * @param {(Buffer|string)?} chunk - Value to write.
-   * @param {string?} [encoding] - Encoding.
-   * @param {Function?} [callback] - Callback.
-   * @return {boolean} - Whether the write was succesful.
-   */
-  function write(chunk, encoding, callback) {
-    assertConcrete('write');
-
-    if (isFunction(encoding)) {
-      callback = encoding;
-      encoding = null;
-    }
-
-    if (ended) {
-      throw new Error('Did not expect `write` after `end`');
-    }
-
-    chunks.push((chunk || '').toString(encoding || 'utf8'));
-
-    if (callback) {
-      callback();
-    }
-
-    /* Signal succesful write. */
-    return true;
-  }
-
-  /**
-   * End the writing.  Passes all arguments to a final
-   * `write`.  Starts the process, which will trigger
-   * `error`, with a fatal error, if any; `data`, with
-   * the generated document in `string` form, if
-   * succesful.  If messages are triggered during the
-   * process, those are triggerd as `warning`s.
-   *
-   * @return {boolean} - Whether the last write was
-   *   succesful.
-   */
-  function end() {
-    assertConcrete('end');
-    assertParser('end');
-    assertCompiler('end');
-
-    write.apply(null, arguments);
-
-    ended = true;
-
-    process(chunks.join(''), settings, function (err, file) {
-      var messages = file.messages;
-      var length = messages.length;
-      var index = -1;
-
-      chunks = settings = null;
-
-      /* Trigger messages as warnings, except for fatal error. */
-      while (++index < length) {
-        if (messages[index] !== err) {
-          processor.emit('warning', messages[index]);
+      function done(err) {
+        if (err) {
+          reject(err);
+        } else if (resolve) {
+          resolve(file);
+        } else {
+          cb(null, file);
         }
       }
+    }
+  }
 
-      if (err) {
-        /* Don’t enter an infinite error throwing loop. */
-        global.setTimeout(function () {
-          processor.emit('error', err);
-        }, 4);
-      } else {
-        processor.emit('data', file.contents);
-        processor.emit('end');
-      }
-    });
+  /* Process the given document (in string or VFile
+   * representation), sync. */
+  function processSync(doc) {
+    var complete = false;
+    var file;
 
+    freeze();
+    assertParser('processSync', processor.Parser);
+    assertCompiler('processSync', processor.Compiler);
+    file = vfile(doc);
+
+    process(file, done);
+
+    assertDone('processSync', 'process', complete);
+
+    return file;
+
+    function done(err) {
+      complete = true;
+      bail(err);
+    }
+  }
+}
+
+/* Check if `func` is a constructor. */
+function newable(value) {
+  return func(value) && keys(value.prototype);
+}
+
+/* Check if `value` is an object with keys. */
+function keys(value) {
+  var key;
+  for (key in value) {
     return true;
   }
+  return false;
+}
 
-  /**
-   * Pipe the processor into a writable stream.
-   *
-   * Basically `Stream#pipe`, but inlined and
-   * simplified to keep the bundled size down.
-   *
-   * @see https://github.com/nodejs/node/blob/master/lib/stream.js#L26
-   *
-   * @param {Stream} dest - Writable stream.
-   * @param {Object?} [options] - Processing
-   *   configuration.
-   * @return {Stream} - The destination stream.
-   */
-  function pipe(dest, options) {
-    var onend = once(onended);
-
-    assertConcrete('pipe');
-
-    settings = options || {};
-
-    processor.on('data', ondata);
-    processor.on('error', onerror);
-    processor.on('end', cleanup);
-    processor.on('close', cleanup);
-
-    /* If the 'end' option is not supplied, dest.end() will be
-     * called when the 'end' or 'close' events are received.
-     * Only dest.end() once. */
-    if (!dest._isStdio && settings.end !== false) {
-      processor.on('end', onend);
-    }
-
-    dest.on('error', onerror);
-    dest.on('close', cleanup);
-
-    dest.emit('pipe', processor);
-
-    return dest;
-
-    /** End destination. */
-    function onended() {
-      if (dest.end) {
-        dest.end();
-      }
-    }
-
-    /**
-     * Handle data.
-     *
-     * @param {*} chunk - Data to pass through.
-     */
-    function ondata(chunk) {
-      if (dest.writable) {
-        dest.write(chunk);
-      }
-    }
-
-    /**
-     * Clean listeners.
-     */
-    function cleanup() {
-      processor.removeListener('data', ondata);
-      processor.removeListener('end', onend);
-      processor.removeListener('error', onerror);
-      processor.removeListener('end', cleanup);
-      processor.removeListener('close', cleanup);
-
-      dest.removeListener('error', onerror);
-      dest.removeListener('close', cleanup);
-    }
-
-    /**
-     * Close dangling pipes and handle unheard errors.
-     *
-     * @param {Error} err - Exception.
-     */
-    function onerror(err) {
-      var handlers = processor._events.error;
-
-      cleanup();
-
-      /* Cannot use `listenerCount` in node <= 0.12. */
-      if (!handlers || !handlers.length || handlers === onerror) {
-        throw err; /* Unhandled stream error in pipe. */
-      }
-    }
+/* Assert a parser is available. */
+function assertParser(name, Parser) {
+  if (!func(Parser)) {
+    throw new Error('Cannot `' + name + '` without `Parser`');
   }
 }
 
-/**
- * Check if `node` is a Unist node.
- *
- * @param {*} node - Value.
- * @return {boolean} - Whether `node` is a Unist node.
- */
-function isNode(node) {
-  return node && string(node.type) && node.type.length !== 0;
+/* Assert a compiler is available. */
+function assertCompiler(name, Compiler) {
+  if (!func(Compiler)) {
+    throw new Error('Cannot `' + name + '` without `Compiler`');
+  }
 }
 
-/**
- * Check if `fn` is a function.
- *
- * @param {*} fn - Value.
- * @return {boolean} - Whether `fn` is a function.
- */
-function isFunction(fn) {
-  return typeof fn === 'function';
+/* Assert the processor is not frozen. */
+function assertUnfrozen(name, frozen) {
+  if (frozen) {
+    throw new Error(
+      'Cannot invoke `' + name + '` on a frozen processor.\n' +
+      'Create a new processor first, by invoking it: ' +
+      'use `processor()` instead of `processor`.'
+    );
+  }
 }
 
-/**
- * Check if `compiler` is a Compiler.
- *
- * @param {*} compiler - Value.
- * @return {boolean} - Whether `compiler` is a Compiler.
- */
-function isCompiler(compiler) {
-  return isFunction(compiler) && compiler.prototype && isFunction(compiler.prototype.compile);
+/* Assert `node` is a Unist node. */
+function assertNode(node) {
+  if (!node || !string(node.type)) {
+    throw new Error('Expected node, got `' + node + '`');
+  }
 }
 
-/**
- * Check if `parser` is a Parser.
- *
- * @param {*} parser - Value.
- * @return {boolean} - Whether `parser` is a Parser.
- */
-function isParser(parser) {
-  return isFunction(parser) && parser.prototype && isFunction(parser.prototype.parse);
+/* Assert that `complete` is `true`. */
+function assertDone(name, asyncName, complete) {
+  if (!complete) {
+    throw new Error('`' + name + '` finished async. Use `' + asyncName + '` instead');
+  }
 }
 
-/**
- * Check if `processor` is a unified processor.
- *
- * @param {*} processor - Value.
- * @return {boolean} - Whether `processor` is a processor.
- */
-function isProcessor(processor) {
-  return isFunction(processor) && isFunction(processor.use) && isFunction(processor.process);
-}
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"bail":3,"events":14,"extend":15,"has":18,"is-buffer":23,"once":32,"trough":143,"vfile":151,"x-is-string":153}],146:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module unist:util:modify-children
- * @fileoverview Unist utility to modify direct children of a parent.
- */
-
+},{"bail":3,"extend":10,"is-plain-obj":18,"trough":129,"vfile":137,"x-is-function":138,"x-is-string":139}],132:[function(require,module,exports){
 'use strict';
-
-/* eslint-env commonjs */
-
-/*
- * Dependencies.
- */
 
 var iterate = require('array-iterate');
 
-/**
- * Modifier for children of `parent`.
- *
- * @typedef modifyChildren~callback
- * @param {Node} child - Current iteration;
- * @param {number} index - Position of `child` in `parent`;
- * @param {Node} parent - Parent node of `child`.
- * @return {number?} - Next position to iterate.
- */
-
-/**
- * Function invoking a bound `fn` for each child of `parent`.
- *
- * @typedef modifyChildren~modifier
- * @param {Node} parent - Node with children.
- * @throws {Error} - When not given a parent node.
- */
-
-/**
- * Pass the context as the third argument to `callback`.
- *
- * @param {modifyChildren~callback} callback - Function to wrap.
- * @return {function(Node, number): number?} - Intermediate
- *   version partially aplied version of
- *   `modifyChildren~modifier`.
- */
-function wrapperFactory(callback) {
-    return function (value, index) {
-        return callback(value, index, this);
-    };
-}
-
-/**
- * Turns `callback` into a ``iterator'' accepting a parent.
- *
- * see ``array-iterate'' for more info.
- *
- * @param {modifyChildren~callback} callback - Function to wrap.
- * @return {modifyChildren~modifier}
- */
-function iteratorFactory(callback) {
-    return function (parent) {
-        var children = parent && parent.children;
-
-        if (!children) {
-            throw new Error('Missing children in `parent` for `modifier`');
-        }
-
-        return iterate(children, callback, parent);
-    };
-}
-
-/**
- * Turns `callback` into a child-modifier accepting a parent.
- *
- * See `array-iterate` for more info.
- *
- * @param {modifyChildren~callback} callback - Function to wrap.
- * @return {modifyChildren~modifier} - Wrapped `fn`.
- */
-function modifierFactory(callback) {
-    return iteratorFactory(wrapperFactory(callback));
-}
-
-/*
- * Expose.
- */
-
 module.exports = modifierFactory;
 
-},{"array-iterate":2}],147:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2016 Titus Wormer
- * @license MIT
- * @module unist:util:remove-position
- * @fileoverview Remove `position`s from a unist tree.
- */
+/* Turn `callback` into a child-modifier accepting a parent.
+ * See `array-iterate` for more info. */
+function modifierFactory(callback) {
+  return iteratorFactory(wrapperFactory(callback));
+}
 
+/* Turn `callback` into a `iterator' accepting a parent. */
+function iteratorFactory(callback) {
+  return iterator;
+
+  function iterator(parent) {
+    var children = parent && parent.children;
+
+    if (!children) {
+      throw new Error('Missing children in `parent` for `modifier`');
+    }
+
+    return iterate(children, callback, parent);
+  }
+}
+
+/* Pass the context as the third argument to `callback`. */
+function wrapperFactory(callback) {
+  return wrapper;
+
+  function wrapper(value, index) {
+    return callback(value, index, this);
+  }
+}
+
+},{"array-iterate":2}],133:[function(require,module,exports){
 'use strict';
 
-/* eslint-env commonjs */
-
-/* Dependencies. */
 var visit = require('unist-util-visit');
 
-/* Expose. */
 module.exports = removePosition;
 
-/**
- * Remove `position`s from `tree`.
- *
- * @param {Node} tree - Node.
- * @return {Node} - Node without `position`s.
- */
+/* Remove `position`s from `tree`. */
 function removePosition(node, force) {
   visit(node, force ? hard : soft);
   return node;
 }
 
-/**
- * Delete `position`.
- */
 function hard(node) {
   delete node.position;
 }
 
-/**
- * Remove `position` softly.
- */
 function soft(node) {
   node.position = undefined;
 }
 
-},{"unist-util-visit":149}],148:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2016 Titus Wormer
- * @license MIT
- * @module unist:util:stringify-position
- * @fileoverview Stringify a Unist node, location, or position.
- */
-
+},{"unist-util-visit":135}],134:[function(require,module,exports){
 'use strict';
 
-/* eslint-env commonjs */
-
-/*
- * Methods.
- */
-
-var has = Object.prototype.hasOwnProperty;
-
-/**
- * Stringify a single index.
- *
- * @param {*} value - Index?
- * @return {string?} - Stringified index?
- */
-function index(value) {
-    return value && typeof value === 'number' ? value : 1;
-}
-
-/**
- * Stringify a single position.
- *
- * @param {*} pos - Position?
- * @return {string?} - Stringified position?
- */
-function position(pos) {
-    if (!pos || typeof pos !== 'object') {
-        pos = {};
-    }
-
-    return index(pos.line) + ':' + index(pos.column);
-}
-
-/**
- * Stringify a single location.
- *
- * @param {*} loc - Location?
- * @return {string?} - Stringified location?
- */
-function location(loc) {
-    if (!loc || typeof loc !== 'object') {
-        loc = {};
-    }
-
-    return position(loc.start) + '-' + position(loc.end);
-}
-
-/**
- * Stringify a node, location, or position into a range or
- * a point.
- *
- * @param {Node|Position|Location} value - Thing to stringify.
- * @return {string?} - Stringified positional information?
- */
-function stringify(value) {
-    /* Nothing. */
-    if (!value || typeof value !== 'object') {
-        return null;
-    }
-
-    /* Node. */
-    if (has.call(value, 'position') || has.call(value, 'type')) {
-        return location(value.position);
-    }
-
-    /* Location. */
-    if (has.call(value, 'start') || has.call(value, 'end')) {
-        return location(value);
-    }
-
-    /* Position. */
-    if (has.call(value, 'line') || has.call(value, 'column')) {
-        return position(value);
-    }
-
-    /* ? */
-    return null;
-}
-
-/*
- * Expose.
- */
+var own = {}.hasOwnProperty;
 
 module.exports = stringify;
 
-},{}],149:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module unist:util:visit
- * @fileoverview Recursively walk over unist nodes.
- */
+function stringify(value) {
+  /* Nothing. */
+  if (!value || typeof value !== 'object') {
+    return null;
+  }
 
-'use strict';
+  /* Node. */
+  if (own.call(value, 'position') || own.call(value, 'type')) {
+    return location(value.position);
+  }
 
-/* eslint-env commonjs */
+  /* Location. */
+  if (own.call(value, 'start') || own.call(value, 'end')) {
+    return location(value);
+  }
 
-/**
- * Visit.
- *
- * @param {Node} tree - Root node
- * @param {string} [type] - Node type.
- * @param {function(node): boolean?} visitor - Invoked
- *   with each found node.  Can return `false` to stop.
- * @param {boolean} [reverse] - By default, `visit` will
- *   walk forwards, when `reverse` is `true`, `visit`
- *   walks backwards.
- */
-function visit(tree, type, visitor, reverse) {
-    if (typeof type === 'function') {
-        reverse = visitor;
-        visitor = type;
-        type = null;
-    }
+  /* Position. */
+  if (own.call(value, 'line') || own.call(value, 'column')) {
+    return position(value);
+  }
 
-    /**
-     * Visit children in `parent`.
-     *
-     * @param {Array.<Node>} children - Children of `node`.
-     * @param {Node?} parent - Parent of `node`.
-     * @return {boolean?} - `false` if the visiting stopped.
-     */
-    function all(children, parent) {
-        var step = reverse ? -1 : 1;
-        var max = children.length;
-        var min = -1;
-        var index = (reverse ? max : min) + step;
-        var child;
-
-        while (index > min && index < max) {
-            child = children[index];
-
-            if (child && one(child, index, parent) === false) {
-                return false;
-            }
-
-            index += step;
-        }
-
-        return true;
-    }
-
-    /**
-     * Visit a single node.
-     *
-     * @param {Node} node - Node to visit.
-     * @param {number?} [index] - Position of `node` in `parent`.
-     * @param {Node?} [parent] - Parent of `node`.
-     * @return {boolean?} - A result of invoking `visitor`.
-     */
-    function one(node, index, parent) {
-        var result;
-
-        index = index || (parent ? 0 : null);
-
-        if (!type || node.type === type) {
-            result = visitor(node, index, parent || null);
-        }
-
-        if (node.children && result !== false) {
-            return all(node.children, node);
-        }
-
-        return result;
-    }
-
-    one(tree);
+  /* ? */
+  return null;
 }
 
-/*
- * Expose.
- */
+function position(pos) {
+  if (!pos || typeof pos !== 'object') {
+    pos = {};
+  }
 
+  return index(pos.line) + ':' + index(pos.column);
+}
+
+function location(loc) {
+  if (!loc || typeof loc !== 'object') {
+    loc = {};
+  }
+
+  return position(loc.start) + '-' + position(loc.end);
+}
+
+function index(value) {
+  return value && typeof value === 'number' ? value : 1;
+}
+
+},{}],135:[function(require,module,exports){
+'use strict';
+
+/* Expose. */
 module.exports = visit;
 
-},{}],150:[function(require,module,exports){
-/**
- * @author Titus Wormer
- * @copyright 2016 Titus Wormer
- * @license MIT
- * @module vfile-location
- * @fileoverview Convert between positions (line and column-based)
- *   and offsets (range-based) locations in a virtual file.
- */
+/* Visit. */
+function visit(tree, type, visitor, reverse) {
+  if (typeof type === 'function') {
+    reverse = visitor;
+    visitor = type;
+    type = null;
+  }
 
+  one(tree);
+
+  /* Visit a single node. */
+  function one(node, index, parent) {
+    var result;
+
+    index = index || (parent ? 0 : null);
+
+    if (!type || node.type === type) {
+      result = visitor(node, index, parent || null);
+    }
+
+    if (node.children && result !== false) {
+      return all(node.children, node);
+    }
+
+    return result;
+  }
+
+  /* Visit children in `parent`. */
+  function all(children, parent) {
+    var step = reverse ? -1 : 1;
+    var max = children.length;
+    var min = -1;
+    var index = (reverse ? max : min) + step;
+    var child;
+
+    while (index > min && index < max) {
+      child = children[index];
+
+      if (child && one(child, index, parent) === false) {
+        return false;
+      }
+
+      index += step;
+    }
+
+    return true;
+  }
+}
+
+},{}],136:[function(require,module,exports){
 'use strict';
 
 /* Expose. */
 module.exports = factory;
 
-/**
- * Factory.
- *
- * @param {VFile|string|Buffer} file - Virtual file or document.
- */
+/* Factory. */
 function factory(file) {
   var contents = indices(String(file));
 
@@ -15680,27 +11991,13 @@ function factory(file) {
   };
 }
 
-/**
- * Factory to get the line and column-based `position` for
- * `offset` in the bound indices.
- *
- * @param {Array.<number>} indices - Indices of
- *   line-breaks in `value`.
- * @return {Function} - Bound method.
- */
+/* Factory to get the line and column-based `position` for
+ * `offset` in the bound indices. */
 function offsetToPositionFactory(indices) {
   return offsetToPosition;
 
-  /**
-   * Get the line and column-based `position` for
-   * `offset` in the bound indices.
-   *
-   * @param {number} offset - Offset.
-   * @return {Position} - Object with `line`, `column`,
-   *   and `offset` properties based on the bound
-   *   `indices`.  An empty object when given invalid
-   *   or out of bounds input.
-   */
+  /* Get the line and column-based `position` for
+   * `offset` in the bound indices. */
   function offsetToPosition(offset) {
     var index = -1;
     var length = indices.length;
@@ -15723,26 +12020,13 @@ function offsetToPositionFactory(indices) {
   }
 }
 
-/**
- * Factory to get the `offset` for a line and column-based
- * `position` in the bound indices.
- *
- * @param {Array.<number>} indices - Indices of
- *   line-breaks in `value`.
- * @return {Function} - Bound method.
- */
+/* Factory to get the `offset` for a line and column-based
+ * `position` in the bound indices. */
 function positionToOffsetFactory(indices) {
   return positionToOffset;
 
-  /**
-   * Get the `offset` for a line and column-based
-   * `position` in the bound indices.
-   *
-   * @param {Position} position - Object with `line` and
-   *   `column` properties.
-   * @return {number} - Offset. `-1` when given invalid
-   *   or out of bounds input.
-   */
+  /* Get the `offset` for a line and column-based
+   * `position` in the bound indices. */
   function positionToOffset(position) {
     var line = position && position.line;
     var column = position && position.column;
@@ -15755,13 +12039,7 @@ function positionToOffsetFactory(indices) {
   }
 }
 
-/**
- * Get indices of line-breaks in `value`.
- *
- * @param {string} value - Value.
- * @return {Array.<number>} - List of indices of
- *   line-breaks.
- */
+/* Get indices of line-breaks in `value`. */
 function indices(value) {
   var result = [];
   var index = value.indexOf('\n');
@@ -15776,42 +12054,31 @@ function indices(value) {
   return result;
 }
 
-},{}],151:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 (function (process){
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module vfile
- * @fileoverview Virtual file format to attach additional
- *   information related to processed input.  Similar to
- *   `wearefractal/vinyl`.
- */
-
 'use strict';
 
-/* Dependencies. */
 var path = require('path');
-var has = require('has');
 var replace = require('replace-ext');
 var stringify = require('unist-util-stringify-position');
 var buffer = require('is-buffer');
-var string = require('x-is-string');
 
-/* Expose. */
 module.exports = VFile;
 
-/* Methods. */
+var own = {}.hasOwnProperty;
 var proto = VFile.prototype;
 
 proto.toString = toString;
 proto.message = message;
+proto.info = info;
 proto.fail = fail;
 
 /* Slight backwards compatibility.  Remove in the future. */
 proto.warn = message;
 
-/* Order of setting (least specific to most). */
+/* Order of setting (least specific to most), we need this because
+ * otherwise `{stem: 'a', path: '~/b.js'}` would throw, as a path
+ * is needed before a stem can be set. */
 var order = [
   'history',
   'path',
@@ -15821,12 +12088,7 @@ var order = [
   'dirname'
 ];
 
-/**
- * Construct a new file.
- *
- * @constructor
- * @param {Object|VFile|string} [options] - File, contents, or config.
- */
+/* Construct a new file. */
 function VFile(options) {
   var prop;
   var index;
@@ -15834,7 +12096,7 @@ function VFile(options) {
 
   if (!options) {
     options = {};
-  } else if (string(options) || buffer(options)) {
+  } else if (typeof options === 'string' || buffer(options)) {
     options = {contents: options};
   } else if ('message' in options && 'messages' in options) {
     return options;
@@ -15856,7 +12118,7 @@ function VFile(options) {
   while (++index < length) {
     prop = order[index];
 
-    if (has(options, prop)) {
+    if (own.call(options, prop)) {
       this[prop] = options[prop];
     }
   }
@@ -15869,9 +12131,7 @@ function VFile(options) {
   }
 }
 
-/**
- * Access complete path (`~/index.min.js`).
- */
+/* Access full path (`~/index.min.js`). */
 Object.defineProperty(proto, 'path', {
   get: function () {
     return this.history[this.history.length - 1];
@@ -15885,12 +12145,10 @@ Object.defineProperty(proto, 'path', {
   }
 });
 
-/**
- * Access parent path (`~`).
- */
+/* Access parent path (`~`). */
 Object.defineProperty(proto, 'dirname', {
   get: function () {
-    return string(this.path) ? path.dirname(this.path) : undefined;
+    return typeof this.path === 'string' ? path.dirname(this.path) : undefined;
   },
   set: function (dirname) {
     assertPath(this.path, 'dirname');
@@ -15898,12 +12156,10 @@ Object.defineProperty(proto, 'dirname', {
   }
 });
 
-/**
- * Access basename (`index.min.js`).
- */
+/* Access basename (`index.min.js`). */
 Object.defineProperty(proto, 'basename', {
   get: function () {
-    return string(this.path) ? path.basename(this.path) : undefined;
+    return typeof this.path === 'string' ? path.basename(this.path) : undefined;
   },
   set: function (basename) {
     assertNonEmpty(basename, 'basename');
@@ -15912,12 +12168,10 @@ Object.defineProperty(proto, 'basename', {
   }
 });
 
-/**
- * Access extname (`.js`).
- */
+/* Access extname (`.js`). */
 Object.defineProperty(proto, 'extname', {
   get: function () {
-    return string(this.path) ? path.extname(this.path) : undefined;
+    return typeof this.path === 'string' ? path.extname(this.path) : undefined;
   },
   set: function (extname) {
     var ext = extname || '';
@@ -15939,12 +12193,10 @@ Object.defineProperty(proto, 'extname', {
   }
 });
 
-/**
- * Access stem (`index.min`).
- */
+/* Access stem (`index.min`). */
 Object.defineProperty(proto, 'stem', {
   get: function () {
-    return string(this.path) ? path.basename(this.path, this.extname) : undefined;
+    return typeof this.path === 'string' ? path.basename(this.path, this.extname) : undefined;
   },
   set: function (stem) {
     assertNonEmpty(stem, 'stem');
@@ -15953,26 +12205,14 @@ Object.defineProperty(proto, 'stem', {
   }
 });
 
-/**
- * Get the value of the file.
- *
- * @return {string} - Contents.
- */
+/* Get the value of the file. */
 function toString(encoding) {
   var value = this.contents || '';
   return buffer(value) ? value.toString(encoding) : String(value);
 }
 
-/**
- * Create a message with `reason` at `position`.
- * When an error is passed in as `reason`, copies the
- * stack.  This does not add a message to `messages`.
- *
- * @param {string|Error} reason - Reason for message.
- * @param {Node|Location|Position} [position] - Place of message.
- * @param {string} [ruleId] - Category of message.
- * @return {VMessage} - Message.
- */
+/* Create a message with `reason` at `position`.
+ * When an error is passed in as `reason`, copies the stack. */
 function message(reason, position, ruleId) {
   var filePath = this.path;
   var range = stringify(position) || '1:1';
@@ -15996,8 +12236,6 @@ function message(reason, position, ruleId) {
     } else {
       /* Position. */
       location.start = position;
-      location.end.line = null;
-      location.end.column = null;
     }
   }
 
@@ -16022,18 +12260,24 @@ function message(reason, position, ruleId) {
   return err;
 }
 
-/**
- * Fail. Creates a vmessage, associates it with the file,
- * and throws it.
- *
- * @throws {VMessage} - Fatal exception.
- */
+/* Fail. Creates a vmessage, associates it with the file,
+ * and throws it. */
 function fail() {
   var message = this.message.apply(this, arguments);
 
   message.fatal = true;
 
   throw message;
+}
+
+/* Info. Creates a vmessage, associates it with the file,
+ * and marks the fatality as null. */
+function info() {
+  var message = this.message.apply(this, arguments);
+
+  message.fatal = null;
+
+  return message;
 }
 
 /* Inherit from `Error#`. */
@@ -16044,19 +12288,20 @@ VMessage.prototype = new VMessagePrototype();
 /* Message properties. */
 proto = VMessage.prototype;
 
-proto.file = proto.name = proto.reason = proto.message = proto.stack = '';
-proto.fatal = proto.column = proto.line = null;
+proto.file = '';
+proto.name = '';
+proto.reason = '';
+proto.message = '';
+proto.stack = '';
+proto.fatal = null;
+proto.column = null;
+proto.line = null;
 
-/**
- * Construct a new file message.
+/* Construct a new file message.
  *
  * Note: We cannot invoke `Error` on the created context,
  * as that adds readonly `line` and `column` attributes on
- * Safari 9, thus throwing and failing the data.
- *
- * @constructor
- * @param {string} reason - Reason for messaging.
- */
+ * Safari 9, thus throwing and failing the data. */
 function VMessage(reason) {
   this.message = reason;
 }
@@ -16065,9 +12310,7 @@ function VMessage(reason) {
  * not contain `path.sep`). */
 function assertPart(part, name) {
   if (part.indexOf(path.sep) !== -1) {
-    throw new Error(
-      '`' + name + '` cannot be a path: did not expect `' + path.sep + '`'
-    );
+    throw new Error('`' + name + '` cannot be a path: did not expect `' + path.sep + '`');
   }
 }
 
@@ -16081,49 +12324,17 @@ function assertNonEmpty(part, name) {
 /* Assert `path` exists. */
 function assertPath(path, name) {
   if (!path) {
-    throw new Error(
-      'Setting `' + name + '` requires `path` to be set too'
-    );
+    throw new Error('Setting `' + name + '` requires `path` to be set too');
   }
 }
 
 }).call(this,require('_process'))
-},{"_process":35,"has":18,"is-buffer":23,"path":34,"replace-ext":136,"unist-util-stringify-position":148,"x-is-string":153}],152:[function(require,module,exports){
-// Returns a wrapper function that returns a wrapped callback
-// The wrapper function should do some stuff, and return a
-// presumably different callback function.
-// This makes sure that own properties are retained, so that
-// decorations and such are not lost along the way.
-module.exports = wrappy
-function wrappy (fn, cb) {
-  if (fn && cb) return wrappy(fn)(cb)
-
-  if (typeof fn !== 'function')
-    throw new TypeError('need wrapper function')
-
-  Object.keys(fn).forEach(function (k) {
-    wrapper[k] = fn[k]
-  })
-
-  return wrapper
-
-  function wrapper() {
-    var args = new Array(arguments.length)
-    for (var i = 0; i < args.length; i++) {
-      args[i] = arguments[i]
-    }
-    var ret = fn.apply(this, args)
-    var cb = args[args.length-1]
-    if (typeof ret === 'function' && ret !== cb) {
-      Object.keys(cb).forEach(function (k) {
-        ret[k] = cb[k]
-      })
-    }
-    return ret
-  }
+},{"_process":27,"is-buffer":15,"path":26,"replace-ext":122,"unist-util-stringify-position":134}],138:[function(require,module,exports){
+module.exports = function isFunction (fn) {
+  return Object.prototype.toString.call(fn) === '[object Function]'
 }
 
-},{}],153:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 var toString = Object.prototype.toString
 
 module.exports = isString
@@ -16132,7 +12343,7 @@ function isString(obj) {
     return toString.call(obj) === "[object String]"
 }
 
-},{}],154:[function(require,module,exports){
+},{}],140:[function(require,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
