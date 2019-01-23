@@ -34,6 +34,8 @@ map.tableCell = empty
 map.definition = empty
 map.yaml = empty
 map.toml = empty
+map.math = empty
+map.inlineMath = empty
 
 /* One node. */
 function one(node) {
